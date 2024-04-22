@@ -1,0 +1,47 @@
+version: "3.3"
+
+services:
+
+  websocket_server:
+    image: aspireilia/ws-server:latest
+    container_name: websocket_server
+    ports:
+      - "${port_websocket_server}:${port_websocket_server}"
+    env_file:
+      - ./.env
+    volumes:
+      - $PWD/common:/common
+    networks:
+      my-custom-network:
+        aliases:
+         - ${network_alias_websocket_server}
+  
+  websocket-microservice:
+    image: aspireilia/ws-rest:latest
+    container_name: websocket-microservice
+    ports:
+      - "${port_websocket_microservice}:${port_websocket_microservice}"
+    volumes:
+      - $PWD/common:/common
+    env_file:
+      - ./.env
+    networks:
+      my-custom-network:
+        aliases:
+         - ${network_alias_websocket_microservice}
+  
+  force_directed_graph:
+    image: aspireilia/network-visualizer:latest
+    container_name: force-directed-graph
+    ports:
+      - "${port_force_directed_graph}:3000"
+    environment:
+      - REACT_APP_WEBSOCKET_URL=http://localhost:${port_websocket_server}
+      - REACT_APP_IN_STANDALONE_MODE=true
+    networks:
+      my-custom-network:
+        aliases:
+          - ${network_alias_force_directed_graph}
+
+networks:
+  my-custom-network:
