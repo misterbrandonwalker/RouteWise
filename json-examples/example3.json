@@ -1,0 +1,65 @@
+{
+  "nodes": [
+    {
+      "uuid": "b1f5c16f-03f8-11ed-b293-005056adc055_BDERNNFJNOPAEC-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "inchikey": "BDERNNFJNOPAEC-UHFFFAOYSA-N",
+      "nsinchikey": "BDERNNFJNOPAEC",
+      "name": "BDERNNFJNOPAEC-UHFFFAOYSA-N",
+      "srole": "sm",
+      "node_id": "BDERNNFJNOPAEC-UHFFFAOYSA-N",
+      "node_label": "BDERNNFJNOPAEC-UHFFFAOYSA-N"
+    },
+    {
+      "uuid": "b3c32985-3b53-11ec-a0d2-484d7eee9ac0_ASPR_1002078957",
+      "node_type": "reaction",
+      "rxid": "ASPR_1002078957",
+      "name": "ASPR_1002078957",
+      "node_id": "ASPR_1002078957",
+      "node_label": "ASPR_1002078957"
+    },
+    {
+      "uuid": "b42d954c-3b53-11ec-9e77-484d7eee9ac0_CYWIEOWOBJPEMV-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "inchikey": "CYWIEOWOBJPEMV-UHFFFAOYSA-N",
+      "nsinchikey": "CYWIEOWOBJPEMV",
+      "name": "CYWIEOWOBJPEMV-UHFFFAOYSA-N",
+      "srole": "tm",
+      "node_id": "CYWIEOWOBJPEMV-UHFFFAOYSA-N",
+      "node_label": "CYWIEOWOBJPEMV-UHFFFAOYSA-N"
+    },
+    {
+      "uuid": "b4785d4c-3b53-11ec-b9f7-484d7eee9ac0_GYWYRJBGPKHKCX-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "inchikey": "GYWYRJBGPKHKCX-UHFFFAOYSA-N",
+      "nsinchikey": "GYWYRJBGPKHKCX",
+      "name": "GYWYRJBGPKHKCX-UHFFFAOYSA-N",
+      "srole": "sm",
+      "node_id": "GYWYRJBGPKHKCX-UHFFFAOYSA-N",
+      "node_label": "GYWYRJBGPKHKCX-UHFFFAOYSA-N"
+    }
+  ],
+  "edges": [
+    {
+      "edge_type": "reactant_of",
+      "uuid": "bf121d85-3b53-11ec-ade4-484d7eee9ac0_BDERNNFJNOPAEC-UHFFFAOYSA-N_ASPR_1002078957",
+      "start_node": "BDERNNFJNOPAEC-UHFFFAOYSA-N",
+      "end_node": "ASPR_1002078957",
+      "edge_label": "BDERNNFJNOPAEC-UHFFFAOYSA-N_ASPR_1002078957"
+    },
+    {
+      "edge_type": "product_of",
+      "uuid": "c12ef511-3b53-11ec-88f0-484d7eee9ac0_ASPR_1002078957_CYWIEOWOBJPEMV-UHFFFAOYSA-N",
+      "start_node": "ASPR_1002078957",
+      "end_node": "CYWIEOWOBJPEMV-UHFFFAOYSA-N",
+      "edge_label": "ASPR_1002078957_CYWIEOWOBJPEMV-UHFFFAOYSA-N"
+    },
+    {
+      "edge_type": "reactant_of",
+      "uuid": "bf121e72-3b53-11ec-a6d1-484d7eee9ac0_GYWYRJBGPKHKCX-UHFFFAOYSA-N_ASPR_1002078957",
+      "start_node": "GYWYRJBGPKHKCX-UHFFFAOYSA-N",
+      "end_node": "ASPR_1002078957",
+      "edge_label": "GYWYRJBGPKHKCX-UHFFFAOYSA-N_ASPR_1002078957"
+    }
+  ]
+}
