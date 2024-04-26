@@ -5,8 +5,6 @@
       "node_type": "reaction",
       "rxid": "ASPR_1002040490",
       "name": "ASPR_1002040490",
-      "yield_score": 0,
-      "yield_predicted": 0,
       "node_id": "ASPR_1002040490",
       "node_label": "ASPR_1002040490"
     },
@@ -45,8 +43,6 @@
       "node_type": "reaction",
       "rxid": "ASPR_1000954504",
       "name": "ASPR_1000954504",
-      "yield_score": 0,
-      "yield_predicted": 0,
       "node_id": "ASPR_1000954504",
       "node_label": "ASPR_1000954504"
     },
@@ -105,8 +101,6 @@
       "node_type": "reaction",
       "rxid": "ASPR_1000425567",
       "name": "ASPR_1000425567",
-      "yield_score": 0,
-      "yield_predicted": 0,
       "node_id": "ASPR_1000425567",
       "node_label": "ASPR_1000425567"
     },
@@ -125,8 +119,6 @@
       "node_type": "reaction",
       "rxid": "ASPR_1001406746",
       "name": "ASPR_1001406746",
-      "yield_score": 0,
-      "yield_predicted": 0,
       "node_id": "ASPR_1001406746",
       "node_label": "ASPR_1001406746"
     },
@@ -165,8 +157,6 @@
       "node_type": "reaction",
       "rxid": "ASPR_1001997437",
       "name": "ASPR_1001997437",
-      "yield_score": 0,
-      "yield_predicted": 0,
       "node_id": "ASPR_1001997437",
       "node_label": "ASPR_1001997437"
     },
@@ -185,8 +175,6 @@
       "node_type": "reaction",
       "rxid": "ASPR_1002035889",
       "name": "ASPR_1002035889",
-      "yield_score": 0,
-      "yield_predicted": 0,
       "node_id": "ASPR_1002035889",
       "node_label": "ASPR_1002035889"
     },
@@ -215,8 +203,6 @@
       "node_type": "reaction",
       "rxid": "ASPR_1000508181",
       "name": "ASPR_1000508181",
-      "yield_score": 0,
-      "yield_predicted": 0,
       "node_id": "ASPR_1000508181",
       "node_label": "ASPR_1000508181"
     },
@@ -245,8 +231,6 @@
       "node_type": "reaction",
       "rxid": "ASPR_1002005736",
       "name": "ASPR_1002005736",
-      "yield_score": 0,
-      "yield_predicted": 0,
       "node_id": "ASPR_1002005736",
       "node_label": "ASPR_1002005736"
     },
@@ -265,8 +249,6 @@
       "node_type": "reaction",
       "rxid": "ASPR_1001636671",
       "name": "ASPR_1001636671",
-      "yield_score": 0,
-      "yield_predicted": 0,
       "node_id": "ASPR_1001636671",
       "node_label": "ASPR_1001636671"
     },

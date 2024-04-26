@@ -1,0 +1,234 @@
+{
+  "nodes": [
+    {
+      "node_type": "reaction",
+      "rxid": "ASPR_1001888096",
+      "uuid": "92f99b5a-03f8-11ed-9b7d-005056adc055_ASPR_1001888096",
+      "node_label": "ASPR_1001888096"
+    },
+    {
+      "inchikey": "VNNWNQLZJKTHBK-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "VNNWNQLZJKTHBK",
+      "uuid": "bf44b26f-03f8-11ed-8378-005056adc055_VNNWNQLZJKTHBK-UHFFFAOYSA-N",
+      "node_label": "VNNWNQLZJKTHBK-UHFFFAOYSA-N"
+    },
+    {
+      "inchikey": "FWPYUSLQCQDLJR-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "FWPYUSLQCQDLJR",
+      "uuid": "b4a24ea4-03f8-11ed-806f-005056adc055_FWPYUSLQCQDLJR-UHFFFAOYSA-N",
+      "node_label": "FWPYUSLQCQDLJR-UHFFFAOYSA-N"
+    },
+    {
+      "inchikey": "VHYFNPMBLIVWCW-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "VHYFNPMBLIVWCW",
+      "uuid": "bf1dabca-03f8-11ed-b407-005056adc055_VHYFNPMBLIVWCW-UHFFFAOYSA-N",
+      "node_label": "VHYFNPMBLIVWCW-UHFFFAOYSA-N"
+    },
+    {
+      "inchikey": "ZMXDDKWLCZADIW-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "ZMXDDKWLCZADIW",
+      "uuid": "c2195014-03f8-11ed-9235-005056adc055_ZMXDDKWLCZADIW-UHFFFAOYSA-N",
+      "node_label": "ZMXDDKWLCZADIW-UHFFFAOYSA-N"
+    },
+    {
+      "inchikey": "OGTFQJICZDEKSM-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "OGTFQJICZDEKSM",
+      "uuid": "baa66bbd-03f8-11ed-9201-005056adc055_OGTFQJICZDEKSM-UHFFFAOYSA-N",
+      "node_label": "OGTFQJICZDEKSM-UHFFFAOYSA-N"
+    },
+    {
+      "node_type": "reaction",
+      "rxid": "ASPR_1001858066",
+      "uuid": "92f99a0f-03f8-11ed-a4c6-005056adc055_ASPR_1001858066",
+      "node_label": "ASPR_1001858066"
+    },
+    {
+      "inchikey": "JHBVZGONNIVXFJ-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "JHBVZGONNIVXFJ",
+      "uuid": "b7102ae8-03f8-11ed-94da-005056adc055_JHBVZGONNIVXFJ-UHFFFAOYSA-N",
+      "node_label": "JHBVZGONNIVXFJ-UHFFFAOYSA-N"
+    },
+    {
+      "inchikey": "JGFZNNIVVJXRND-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "JGFZNNIVVJXRND",
+      "uuid": "b70a46d1-03f8-11ed-ad67-005056adc055_JGFZNNIVVJXRND-UHFFFAOYSA-N",
+      "node_label": "JGFZNNIVVJXRND-UHFFFAOYSA-N"
+    },
+    {
+      "inchikey": "OPKOKAMJFNKNAS-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "OPKOKAMJFNKNAS",
+      "uuid": "bae34170-03f8-11ed-bfdd-005056adc055_OPKOKAMJFNKNAS-UHFFFAOYSA-N",
+      "node_label": "OPKOKAMJFNKNAS-UHFFFAOYSA-N"
+    },
+    {
+      "inchikey": "UCPYLLCMEDAXFR-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "UCPYLLCMEDAXFR",
+      "uuid": "be43a228-03f8-11ed-9b31-005056adc055_UCPYLLCMEDAXFR-UHFFFAOYSA-N",
+      "node_label": "UCPYLLCMEDAXFR-UHFFFAOYSA-N"
+    },
+    {
+      "inchikey": "WYURNTSHIVDZCO-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "WYURNTSHIVDZCO",
+      "uuid": "c0496e27-03f8-11ed-aa7c-005056adc055_WYURNTSHIVDZCO-UHFFFAOYSA-N",
+      "node_label": "WYURNTSHIVDZCO-UHFFFAOYSA-N"
+    },
+    {
+      "node_type": "reaction",
+      "rxid": "ASPR_1001251132",
+      "uuid": "9333bd14-03f8-11ed-902d-005056adc055_ASPR_1001251132",
+      "node_label": "ASPR_1001251132"
+    },
+    {
+      "inchikey": "QAOWNCQODCNURD-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "QAOWNCQODCNURD",
+      "uuid": "bbe7aeb6-03f8-11ed-a933-005056adc055_QAOWNCQODCNURD-UHFFFAOYSA-N",
+      "node_label": "QAOWNCQODCNURD-UHFFFAOYSA-N"
+    },
+    {
+      "inchikey": "WGTYBPLFGIVFAS-UHFFFAOYSA-M",
+      "node_type": "substance",
+      "nsinchikey": "WGTYBPLFGIVFAS",
+      "uuid": "bfcb351d-03f8-11ed-ac06-005056adc055_WGTYBPLFGIVFAS-UHFFFAOYSA-M",
+      "node_label": "WGTYBPLFGIVFAS-UHFFFAOYSA-M"
+    },
+    {
+      "inchikey": "MHAJPDPJQMAIIY-UHFFFAOYSA-N",
+      "node_type": "substance",
+      "nsinchikey": "MHAJPDPJQMAIIY",
+      "uuid": "b934b366-03f8-11ed-b491-005056adc055_MHAJPDPJQMAIIY-UHFFFAOYSA-N",
+      "node_label": "MHAJPDPJQMAIIY-UHFFFAOYSA-N"
+    },
+    {
+      "inchikey": "VDZOOKBUILJEDG-UHFFFAOYSA-M",
+      "node_type": "substance",
+      "nsinchikey": "VDZOOKBUILJEDG",
+      "uuid": "bf01a6dc-03f8-11ed-ac94-005056adc055_VDZOOKBUILJEDG-UHFFFAOYSA-M",
+      "node_label": "VDZOOKBUILJEDG-UHFFFAOYSA-M"
+    }
+  ],
+  "edges": [
+    {
+      "edge_label": "VNNWNQLZJKTHBK-UHFFFAOYSA-N_ASPR_1001888096",
+      "edge_type": "reactant_of",
+      "uuid": "fa693944-03f8-11ed-8748-005056adc055_VNNWNQLZJKTHBK-UHFFFAOYSA-N_ASPR_1001888096",
+      "start_node": "VNNWNQLZJKTHBK-UHFFFAOYSA-N",
+      "end_node": "ASPR_1001888096"
+    },
+    {
+      "edge_label": "FWPYUSLQCQDLJR-UHFFFAOYSA-N_ASPR_1001888096",
+      "edge_type": "reactant_of",
+      "uuid": "fa6939e8-03f8-11ed-a154-005056adc055_FWPYUSLQCQDLJR-UHFFFAOYSA-N_ASPR_1001888096",
+      "start_node": "FWPYUSLQCQDLJR-UHFFFAOYSA-N",
+      "end_node": "ASPR_1001888096"
+    },
+    {
+      "edge_label": "VHYFNPMBLIVWCW-UHFFFAOYSA-N_ASPR_1001888096",
+      "edge_type": "reagent_of",
+      "uuid": "2c02225d-03f9-11ed-99d2-005056adc055_VHYFNPMBLIVWCW-UHFFFAOYSA-N_ASPR_1001888096",
+      "start_node": "VHYFNPMBLIVWCW-UHFFFAOYSA-N",
+      "end_node": "ASPR_1001888096"
+    },
+    {
+      "edge_label": "ZMXDDKWLCZADIW-UHFFFAOYSA-N_ASPR_1001888096",
+      "edge_type": "reagent_of",
+      "uuid": "2c0221b7-03f9-11ed-9847-005056adc055_ZMXDDKWLCZADIW-UHFFFAOYSA-N_ASPR_1001888096",
+      "start_node": "ZMXDDKWLCZADIW-UHFFFAOYSA-N",
+      "end_node": "ASPR_1001888096"
+    },
+    {
+      "edge_label": "ASPR_1001888096_OGTFQJICZDEKSM-UHFFFAOYSA-N",
+      "edge_type": "product_of",
+      "uuid": "46a8eda9-03f9-11ed-9bef-005056adc055_ASPR_1001888096_OGTFQJICZDEKSM-UHFFFAOYSA-N",
+      "start_node": "ASPR_1001888096",
+      "end_node": "OGTFQJICZDEKSM-UHFFFAOYSA-N"
+    },
+    {
+      "edge_label": "JHBVZGONNIVXFJ-UHFFFAOYSA-N_ASPR_1001858066",
+      "edge_type": "reactant_of",
+      "uuid": "fa693758-03f8-11ed-8ac0-005056adc055_JHBVZGONNIVXFJ-UHFFFAOYSA-N_ASPR_1001858066",
+      "start_node": "JHBVZGONNIVXFJ-UHFFFAOYSA-N",
+      "end_node": "ASPR_1001858066"
+    },
+    {
+      "edge_label": "JGFZNNIVVJXRND-UHFFFAOYSA-N_ASPR_1001858066",
+      "edge_type": "reactant_of",
+      "uuid": "fa6937fd-03f8-11ed-9fb1-005056adc055_JGFZNNIVVJXRND-UHFFFAOYSA-N_ASPR_1001858066",
+      "start_node": "JGFZNNIVVJXRND-UHFFFAOYSA-N",
+      "end_node": "ASPR_1001858066"
+    },
+    {
+      "edge_label": "OPKOKAMJFNKNAS-UHFFFAOYSA-N_ASPR_1001858066",
+      "edge_type": "reactant_of",
+      "uuid": "fa6938a1-03f8-11ed-ad21-005056adc055_OPKOKAMJFNKNAS-UHFFFAOYSA-N_ASPR_1001858066",
+      "start_node": "OPKOKAMJFNKNAS-UHFFFAOYSA-N",
+      "end_node": "ASPR_1001858066"
+    },
+    {
+      "edge_label": "UCPYLLCMEDAXFR-UHFFFAOYSA-N_ASPR_1001858066",
+      "edge_type": "reactant_of",
+      "uuid": "fa6936af-03f8-11ed-9818-005056adc055_UCPYLLCMEDAXFR-UHFFFAOYSA-N_ASPR_1001858066",
+      "start_node": "UCPYLLCMEDAXFR-UHFFFAOYSA-N",
+      "end_node": "ASPR_1001858066"
+    },
+    {
+      "edge_label": "WYURNTSHIVDZCO-UHFFFAOYSA-N_ASPR_1001858066",
+      "edge_type": "reagent_of",
+      "uuid": "2c02210f-03f9-11ed-82f4-005056adc055_WYURNTSHIVDZCO-UHFFFAOYSA-N_ASPR_1001858066",
+      "start_node": "WYURNTSHIVDZCO-UHFFFAOYSA-N",
+      "end_node": "ASPR_1001858066"
+    },
+    {
+      "edge_label": "ASPR_1001858066_VNNWNQLZJKTHBK-UHFFFAOYSA-N",
+      "edge_type": "product_of",
+      "uuid": "46a8ecf0-03f9-11ed-b44d-005056adc055_ASPR_1001858066_VNNWNQLZJKTHBK-UHFFFAOYSA-N",
+      "start_node": "ASPR_1001858066",
+      "end_node": "VNNWNQLZJKTHBK-UHFFFAOYSA-N"
+    },
+    {
+      "edge_label": "QAOWNCQODCNURD-UHFFFAOYSA-N_ASPR_1001251132",
+      "edge_type": "reactant_of",
+      "uuid": "fabbd887-03f8-11ed-92b9-005056adc055_QAOWNCQODCNURD-UHFFFAOYSA-N_ASPR_1001251132",
+      "start_node": "QAOWNCQODCNURD-UHFFFAOYSA-N",
+      "end_node": "ASPR_1001251132"
+    },
+    {
+      "edge_label": "WGTYBPLFGIVFAS-UHFFFAOYSA-M_ASPR_1001251132",
+      "edge_type": "reactant_of",
+      "uuid": "fabbd9d0-03f8-11ed-b1e4-005056adc055_WGTYBPLFGIVFAS-UHFFFAOYSA-M_ASPR_1001251132",
+      "start_node": "WGTYBPLFGIVFAS-UHFFFAOYSA-M",
+      "end_node": "ASPR_1001251132"
+    },
+    {
+      "edge_label": "MHAJPDPJQMAIIY-UHFFFAOYSA-N_ASPR_1001251132",
+      "edge_type": "reactant_of",
+      "uuid": "fabbd92a-03f8-11ed-8a62-005056adc055_MHAJPDPJQMAIIY-UHFFFAOYSA-N_ASPR_1001251132",
+      "start_node": "MHAJPDPJQMAIIY-UHFFFAOYSA-N",
+      "end_node": "ASPR_1001251132"
+    },
+    {
+      "edge_label": "VDZOOKBUILJEDG-UHFFFAOYSA-M_ASPR_1001251132",
+      "edge_type": "reactant_of",
+      "uuid": "fabbda78-03f8-11ed-a4f2-005056adc055_VDZOOKBUILJEDG-UHFFFAOYSA-M_ASPR_1001251132",
+      "start_node": "VDZOOKBUILJEDG-UHFFFAOYSA-M",
+      "end_node": "ASPR_1001251132"
+    },
+    {
+      "edge_label": "ASPR_1001251132_VHYFNPMBLIVWCW-UHFFFAOYSA-N",
+      "edge_type": "product_of",
+      "uuid": "46c839c8-03f9-11ed-a090-005056adc055_ASPR_1001251132_VHYFNPMBLIVWCW-UHFFFAOYSA-N",
+      "start_node": "ASPR_1001251132",
+      "end_node": "VHYFNPMBLIVWCW-UHFFFAOYSA-N"
+    }
+  ]
+}
