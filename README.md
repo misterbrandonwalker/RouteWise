@@ -92,10 +92,10 @@ In the table below you can find all supported attributes for the **nodes**:
 
 | Attribute | Description |
 | --- | --- |
-| `node_type` | Type of the node, can be: `reaction` (represented by red circle), `substance` (gray square box) or `custom` (will include SVG image as a background to show structures inside the node, check [this section](#showing-graphical-content-inside-the-nodes) for details) |
+| `node_type` | Type of the node, can be: `reaction` (represented by red circle) or `substance` (gray square box) |
 | `node_label` | Label for the node displayed on hover |
 | `srole` | _Works with substance nodes only:_ can be `sm` (**starting material**), `tm` (**target molecule**) or `im` (**intermediate material**). We use different colors depending on the node role, so you can easily find e.g. target molecule in a big graph |
-| `svg` | If you want to include an image for the node - you can do that using this parameter. Check [this section](#showing-graphical-content-inside-the-nodes) for details) |
+| `base64svg` | If you want to include an image for the node - you can do that using this parameter. Check [this section](#showing-graphical-content-inside-the-nodes) for details) |
 
 <hr>
 
@@ -162,7 +162,7 @@ You can change some app settings using "Settings" button in the bottom right cor
 
 ## Showing graphical content inside the nodes
 
-This is an advanced feature and requires to have a solid understanding of some web-based technologies like **SVG** (_Scalable Vector Graphics_) and strings encoding.
+This is an advanced feature and requires to have a solid understanding of some web-based technologies like **SVG** ([_Scalable Vector Graphics_](https://en.wikipedia.org/wiki/SVG)) and strings encoding.
 
 Basically, to add a background (e.g. molecule structure) to the node, you'll need to make the following adjustments to the node:
 
@@ -170,26 +170,22 @@ Basically, to add a background (e.g. molecule structure) to the node, you'll nee
 {
     // ...other node attributes
     "node_type": "custom",
-    "svg": "base64_encoded_image"    
+    "base64svg": "base64_encoded_image"    
 }
 ```
 
 What we see here:
 
 * we replaced `node_type` to type `custom` (this will allow rendering SVG inside this specific node)
-* we added new attribute `svg` that must contain encoded SVG in a specific format (explained below)
+* we added new attribute `base64svg` that must contain encoded SVG in a specific format (explained below)
 
 The last missing chunk of this puzzle is how to encode any SVG image, so Network Visualizer can display it correctly. For that purpose we're going to use the following SVG code as an example:
 
 ```
 <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 24 24">
-  <!-- Oxygen Atom -->
   <circle cx="12" cy="10" r="6" fill="#f00" />
-  <!-- Hydrogen Atom 1 -->
   <circle cx="7" cy="20" r="3" fill="#00f" />
-  <!-- Hydrogen Atom 2 -->
   <circle cx="17" cy="20" r="3" fill="#00f" />
-  <!-- Bonds -->
   <line x1="7" y1="20" x2="12" y2="10" stroke="#000" stroke-width="2" />
   <line x1="17" y1="20" x2="12" y2="10" stroke="#000" stroke-width="2" />
 </svg>
@@ -199,24 +195,24 @@ Which represents a molecule structure for water (H2O):
 
 ![Alt](/images/h2o.png "Water molecule")
 
-Now, we need to convert that SVG to base64 string (you can find code snippet for your preferred programming language e.g. JavaScript or Python).
+Now, we need to convert that SVG to [base64](https://en.wikipedia.org/wiki/Base64) string (you can find code snippet for your preferred programming language e.g. JavaScript or Python).
 
 Finally, once we get base64 line like this for the water molecule:
 
 ```
-PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxjbGlwUG9pbnQgY3g9IjEyIiBjeT0iMTAiIHJlPSI2IiBmaWxsPSIjZjAwIiAvPjxjbGlwUG9pbnQgY3g9IjciIGN5PSIyMCIgc3R5bGU9IjIiIGZpbGw9IiNmMDAiIC8+PGNsaXBQb2ludCBjeD0iMTciIGN5PSIyMCIgc3R5bGU9IjIiIGZpbGw9IiNmMDAiIC8+
+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxjaXJjbGUgY3g9IjEyIiBjeT0iMTAiIHI9IjYiIGZpbGw9IiNmMDAiIC8+CiAgPGNpcmNsZSBjeD0iNyIgY3k9IjIwIiByPSIzIiBmaWxsPSIjMDBmIiAvPgogIDxjaXJjbGUgY3g9IjE3IiBjeT0iMjAiIHI9IjMiIGZpbGw9IiMwMGYiIC8+CiAgPGxpbmUgeDE9IjciIHkxPSIyMCIgeDI9IjEyIiB5Mj0iMTAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPgogIDxsaW5lIHgxPSIxNyIgeTE9IjIwIiB4Mj0iMTIiIHkyPSIxMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiIC8+Cjwvc3ZnPg==
 ```
 
 Now, before we pass that as an attribute for the node - we need to concatenate this base64 with some metadata:
 
 ```
-"svg": "data:image/svg+xml;base64,<PUT_YOUR_BASE64_HERE>"
+"base64svg": "<PUT_YOUR_SVG_ENCODED_AS_BASE64_HERE>"
 ```
 
-Just replace `PUT_YOUR_BASE64_HERE` with the string we just generated, so the final version of it will look like the following:
+Just replace `PUT_YOUR_SVG_ENCODED_AS_BASE64_HERE` with the string we just generated, so the final version of it will look like the following:
 
 ```
-"svg": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxjbGlwUG9pbnQgY3g9IjEyIiBjeT0iMTAiIHJlPSI2IiBmaWxsPSIjZjAwIiAvPjxjbGlwUG9pbnQgY3g9IjciIGN5PSIyMCIgc3R5bGU9IjIiIGZpbGw9IiNmMDAiIC8+PGNsaXBQb2ludCBjeD0iMTciIGN5PSIyMCIgc3R5bGU9IjIiIGZpbGw9IiNmMDAiIC8+"
+"base64svg": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxjaXJjbGUgY3g9IjEyIiBjeT0iMTAiIHI9IjYiIGZpbGw9IiNmMDAiIC8+CiAgPGNpcmNsZSBjeD0iNyIgY3k9IjIwIiByPSIzIiBmaWxsPSIjMDBmIiAvPgogIDxjaXJjbGUgY3g9IjE3IiBjeT0iMjAiIHI9IjMiIGZpbGw9IiMwMGYiIC8+CiAgPGxpbmUgeDE9IjciIHkxPSIyMCIgeDI9IjEyIiB5Mj0iMTAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPgogIDxsaW5lIHgxPSIxNyIgeTE9IjIwIiB4Mj0iMTIiIHkyPSIxMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiIC8+Cjwvc3ZnPg=="
 ```
 
 ## Running containers on custom ports
