@@ -30,9 +30,9 @@ services:
         aliases:
          - ${network_alias_websocket_microservice}
   
-  force_directed_graph:
+  network-visualizer:
     image: aspireilia/network-visualizer:latest
-    container_name: force-directed-graph
+    container_name: network-visualizer
     ports:
       - "${port_force_directed_graph}:3000"
     environment:
