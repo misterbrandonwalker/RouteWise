@@ -3,7 +3,7 @@ version: "3.3"
 services:
 
   websocket_server:
-    image: aspireilia/ws-server:latest
+    image: ncats/aicp-websocket-server:latest
     container_name: websocket_server
     ports:
       - "${port_websocket_server}:${port_websocket_server}"
@@ -17,7 +17,7 @@ services:
          - ${network_alias_websocket_server}
   
   websocket-microservice:
-    image: aspireilia/ws-rest:latest
+    image: ncats/aicp-websocket-microservice:latest
     container_name: websocket-microservice
     ports:
       - "${port_websocket_microservice}:${port_websocket_microservice}"
@@ -31,7 +31,7 @@ services:
          - ${network_alias_websocket_microservice}
   
   network-visualizer:
-    image: aspireilia/network-visualizer:latest
+    image: ncats/aicp-network-visualizer:latest
     container_name: network-visualizer
     ports:
       - "${port_force_directed_graph}:3000"
