@@ -146,7 +146,7 @@ Then you just need to:
 
 ## Sending data via REST API
 
-You can also use REST API to send your graph data to the Network Visualizer. This project includes a [Swagger page at https://prototype-aspire.ncats.nih.gov/api/v1/docs/aicp/websocket_microservice#/default/send_message_websocket_post](https://prototype-aspire.ncats.nih.gov/api/v1/docs/aicp/websocket_microservice#/default/send_message_websocket_post) where you can try it out.
+You can also use REST API to send your graph data to the Network Visualizer. This project includes a [Swagger page](http://localhost:5099/api/v1/docs/aicp/websocket_microservice#/default/send_message_websocket_post) where you can try it out.
 
 That page includes one graph as an example, but you can update nodes and edges right there before sending to Visualizer.
 
