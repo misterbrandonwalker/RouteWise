@@ -2,19 +2,19 @@ version: "3.3"
 
 services:
 
-  websocket_server:
-    image: ncats/aicp-websocket-server:latest
-    container_name: websocket_server
-    ports:
-      - "${port_websocket_server}:${port_websocket_server}"
-    env_file:
-      - ./.env
-    volumes:
-      - $PWD/common:/common
-    networks:
-      my-custom-network:
-        aliases:
-         - ${network_alias_websocket_server}
+  # websocket_server:
+  #   image: ncats/aicp-websocket-server:latest
+  #   container_name: websocket_server
+  #   ports:
+  #     - "${port_websocket_server}:${port_websocket_server}"
+  #   env_file:
+  #     - ./.env
+  #   volumes:
+  #     - $PWD/common:/common
+  #   networks:
+  #     my-custom-network:
+  #       aliases:
+  #        - ${network_alias_websocket_server}
   
   websocket-microservice:
     image: ncats/aicp-websocket-microservice:latest
@@ -36,7 +36,7 @@ services:
     ports:
       - "${port_force_directed_graph}:3000"
     environment:
-      - REACT_APP_WEBSOCKET_URL=http://localhost:${port_websocket_server}
+      - REACT_APP_WEBSOCKET_URL=http://localhost:${port_websocket_microservice}/ws
       - REACT_APP_IN_STANDALONE_MODE=true
     networks:
       my-custom-network:
