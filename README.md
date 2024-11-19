@@ -57,11 +57,13 @@ Next step - open the folder with the code (cloned from Git or unzipped) with you
 docker-compose up -d
 ```
 
-In a few you should be able to see 3 new containers up and running in your Docker:
+**Note:** If on a Mac M series chip `export DOCKER_DEFAULT_PLATFORM=linux/amd64` may be needed to run containers.
+
+After a few minutes, you should be able to see 3 new containers up and running in your Docker:
 
 ![Alt](/images/docker-images.png "Docker containers up and running")
 
-Open http://localhost:3033 to start the Network Visualizer app and follow the next steps in this document.
+Open `http://localhost:3000` to start the Network Visualizer app and follow the next steps in this document.
 
 ## Visualize data using JSON examples
 
@@ -125,18 +127,13 @@ Another way to render graphs - using `curl` command. Here's a basic snippet for 
 
 ```
 curl -X 'POST' \
-  'http://localhost:5098/websocket' \
+  'http://localhost:5099/rooms/{ROOM_ID}' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "input_json": {
-    "message": {
       "nodes": [],
       "edges": []
-    },
-    "room": "ROOM_ID"
-  }
-}'
+    }'
 ```
 
 Then you just need to: 
@@ -215,12 +212,6 @@ Just replace `PUT_YOUR_SVG_ENCODED_AS_BASE64_HERE` with the string we just gener
 "base64svg": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxjaXJjbGUgY3g9IjEyIiBjeT0iMTAiIHI9IjYiIGZpbGw9IiNmMDAiIC8+CiAgPGNpcmNsZSBjeD0iNyIgY3k9IjIwIiByPSIzIiBmaWxsPSIjMDBmIiAvPgogIDxjaXJjbGUgY3g9IjE3IiBjeT0iMjAiIHI9IjMiIGZpbGw9IiMwMGYiIC8+CiAgPGxpbmUgeDE9IjciIHkxPSIyMCIgeDI9IjEyIiB5Mj0iMTAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPgogIDxsaW5lIHgxPSIxNyIgeTE9IjIwIiB4Mj0iMTIiIHkyPSIxMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiIC8+Cjwvc3ZnPg=="
 ```
 
-## Running containers on custom ports
+## Generating SVGs from Smiles
 
-In some cases you may want to change default port numbers pre-defined for this project (e.g. in case you have other apps using one of these ports). To do that you need:
-
-* open `.env` file and find port(s) you need to update
-* make changes and save the file
-* run `docker-compose up -d`
-
-Once docker re-starts all the containers - they will use updated port numbers and still collaborate as intended. 
+If your nodes have are of type 'Reaction' or 'Substance' you can include 'rxsmiles' or 'smiles' respectively to have that smiles structure visualized within the node.
