@@ -18,7 +18,6 @@ import { MainContext } from "../../contexts/MainContext";
 import { curveStyles, graphLayouts } from "../../helpers/commonHelpers";
 import GraphLegend from "./GraphLegend";
 import ApiStatusCheck from "./ApiStatusCheck";
-import { useAuth } from "react-oidc-context";
 
 
 const SETTINGS_TITLE = "Settings";
@@ -27,13 +26,6 @@ const LEGEND_TITLE = "Legend";
 const Settings = () => {
   const [openSettings, setOpenSettings] = useState(false);
   const [openLegend, setOpenLegend] = useState(false);
-  const auth = useAuth();
-
-  const handleLogout = () => {
-    auth.signoutSilent();
-    // Reload the page
-    window.location.reload();
-  };
 
   const {
     setCytoscapeGraph,
@@ -199,11 +191,6 @@ const Settings = () => {
             </Flex>
             <Divider style={{ margin: 0 }} />
             <ApiStatusCheck />
-            <Divider style={{ margin: 0 }} />
-            <Flex gap="middle">
-              <div>Logout: </div>
-              <button onClick={handleLogout} style={{ width: "100px" }}>Logout</button>
-            </Flex>
           </Flex>
         }
         title={SETTINGS_TITLE}

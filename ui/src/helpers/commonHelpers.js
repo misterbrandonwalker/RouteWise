@@ -33,7 +33,6 @@ export const defaultAppSettings = {
   staticContentPath:
     process.env.REACT_APP_STATIC_CONTENT_PATH || "http://localhost:4204",
   showStructures: false,
-  isStandaloneMode: !!process.env.REACT_APP_IN_STANDALONE_MODE,
   edgeCurveStyle: curveStyles.ROUND_TAXI,
   productEdgeThickness: 7,
 };

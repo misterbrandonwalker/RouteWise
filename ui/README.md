@@ -40,8 +40,6 @@ The app has the following environment variables which can be used to control app
 - `REACT_APP_WEBSOCKET_URL` - *TBD if still needed*
 - `REACT_APP_BASE_PATH` - Application base path
 - `REACT_APP_STATIC_CONTENT_PATH` - Static content path
-- `AUTH_AUTHORITY` - OIDC authority
-- `AUTH_CLIENT_ID` - OIDC client ID
 
 ### Code Structure
 

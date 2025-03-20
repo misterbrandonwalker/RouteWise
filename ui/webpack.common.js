@@ -51,10 +51,7 @@ module.exports = {
       "process.env.REACT_APP_STATIC_CONTENT_PATH": JSON.stringify(process.env.REACT_APP_STATIC_CONTENT_PATH),
       "process.env.REACT_APP_API_URL": JSON.stringify(process.env.REACT_APP_API_URL),
       "process.env.REACT_APP_BASE_PATH": JSON.stringify(process.env.REACT_APP_BASE_PATH),
-      "process.env.REACT_APP_IN_STANDALONE_MODE": JSON.stringify(process.env.REACT_APP_IN_STANDALONE_MODE),
       "process.env.NODE_DEBUG": JSON.stringify(process.env.NODE_DEBUG),
-      "process.env.AUTH_AUTHORITY": JSON.stringify(process.env.AUTH_AUTHORITY),
-      "process.env.AUTH_CLIENT_ID": JSON.stringify(process.env.AUTH_CLIENT_ID),
     }),
   ],
   resolve: {

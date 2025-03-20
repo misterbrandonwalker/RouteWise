@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "react-oidc-context";
 
 // components
 import NetworkVisualizer from "./views/Cytoscape";
-import AuthModal from "./components/AuthModal/AuthModal";
 
 // context
 import { MainContext } from "./contexts/MainContext";
@@ -45,9 +43,6 @@ function App() {
   const [showKetcher, setShowKetcher] = useState(false);
   const [ketcherSmiles, setKetcherSmiles] = useState("");
   const [inventoryStatus, setInventoryStatus] = useState({});
-
-  // Auth
-  const auth = useAuth();
 
   useEffect(() => {
     const checkStatus = async () => {
@@ -217,25 +212,6 @@ function App() {
   };
 
   var appContext = <NetworkVisualizer />;
-
-  if (auth.isLoading) {
-    appContext = <div>Loading auth...</div>;
-  }
-
-  const handleLogin = () => {
-    auth.signinRedirect();
-  };
-
-  useEffect(() => {
-    if (auth.isAuthenticated) {
-      // Remove auth params from URL after login
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, [auth.isAuthenticated]);
-
-  if (!auth.isAuthenticated) {
-    appContext = <AuthModal onLogin={handleLogin} />;
-  }
 
   return (
     <MainContext.Provider
