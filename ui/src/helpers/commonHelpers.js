@@ -1,0 +1,671 @@
+import { v4 as uuidv4 } from "uuid";
+import * as colors from "./colors";
+
+export const graphLayouts = {
+  FORCE_DIRECTED: "cola",
+  HIERARCHICAL: "dagre",
+};
+
+export const curveStyles = {
+  ROUND_TAXI: "round-taxi",
+  STRAIGHT: "straight",
+  // BEZIER: "unbundled-bezier",
+  SEGMENTS: "segments",
+};
+
+function removeTrailingSlashFromHostname(hostname) {
+  if (hostname.endsWith("/")) {
+    return hostname.slice(0, -1);
+  } else {
+    return hostname;
+  }
+}
+
+export const generateRoomId = () => uuidv4();
+
+export const defaultAppSettings = {
+  roomId: generateRoomId(),
+  graphSize: 50,
+  apiUrl: removeTrailingSlashFromHostname(
+    process.env.REACT_APP_API_URL || "http://localhost:8002/synthplanning"
+  ),
+  appBasePath: process.env.REACT_APP_BASE_PATH || "/",
+  staticContentPath:
+    process.env.REACT_APP_STATIC_CONTENT_PATH || "http://localhost:4204",
+  showStructures: false,
+  isStandaloneMode: !!process.env.REACT_APP_IN_STANDALONE_MODE,
+  edgeCurveStyle: curveStyles.ROUND_TAXI,
+  productEdgeThickness: 7,
+};
+
+export const defaultGraphSettings = {
+  linkDirectionalArrowLength: 3.5,
+  linkDirectionalArrowRelPos: 1,
+  linkCurvature: 0.25,
+  nodeLabel: "inchikey",
+};
+
+export const genRandomTree = (N = 300, reverse = false) => {
+  return {
+    nodes: [...Array(N).keys()].map((i) => ({
+      id: i,
+      inchikey: "UCPYLLCMEDAXFR-UHFFFAOYSA-N",
+    })),
+    links: [...Array(N).keys()]
+      .filter((id) => id)
+      .map((id) => ({
+        [reverse ? "target" : "source"]: id,
+        [reverse ? "source" : "target"]: Math.round(Math.random() * (id - 1)),
+      })),
+  };
+};
+
+export const mapGraphData = (data) => {
+  return {
+    nodes: data.nodes.map((node) => ({
+      id: node.node_label,
+      inchikey: node.node_label,
+    })),
+    links: data.edges.map((edge) => ({
+      source: edge.start_node,
+      target: edge.end_node,
+    })),
+  };
+};
+
+export const mapGraphDataToCytoscape = (data, askcosRoute = false) => {
+  const nodes = data.nodes.map((node) => {
+    const nodeType = node.node_type.toLowerCase(); // Cast to lowercase for consistency
+    const mappedNode = {
+      id: askcosRoute ? node.node_id : node.node_label,
+      inchikey: node.node_label,
+      nodeType,
+      svg: node.base64svg
+        ? `data:image/svg+xml;base64,${node.base64svg}`
+        : null,
+      type: node.base64svg ? "custom" : null,
+      is_in_savi_130k: node.is_in_savi_130k ? node.is_in_savi_130k : false,
+      is_in_uspto_full: node.is_in_uspto_full ? node.is_in_uspto_full : false,
+      width: node.width,
+      height: node.height,
+      isPredicted: node.data_type === "predicted" ? "true" : "false",
+    };
+
+    if (["substance"].includes(nodeType)) {
+      return {
+        data: {
+          ...mappedNode,
+          srole: node.srole,
+          canonical_smiles: node.canonical_smiles,
+        },
+      };
+    } else if (["reaction"].includes(nodeType)) {
+      return {
+        data: {
+          ...mappedNode,
+          is_in_savi_130k: !!node.is_in_savi_130k,
+          is_in_uspto_full: !!node.is_in_uspto_full,
+          rxid: node.rxid,
+          yield_predicted: node.yield_predicted,
+          yield_score: node.yield_score,
+          rxsmiles: node.rxsmiles,
+        },
+      };
+    }
+  });
+
+  const edges = data.edges.map((edge) => ({
+    data: {
+      id: edge.uuid,
+      source: edge.start_node,
+      target: edge.end_node,
+      edgeType: edge.edge_type,
+      edgeLabel: edge.edge_label,
+      is_in_savi_130k: edge.is_in_savi_130k ? edge.is_in_savi_130k : null,
+      is_in_uspto_full: edge.is_in_uspto_full ? edge.is_in_uspto_full : null,
+      isPredicted:
+        edge.edge_type === "PRODUCT_OF" && edge.data_type === "predicted"
+          ? "true"
+          : "false",
+    },
+  }));
+  return [...nodes, ...edges];
+};
+
+// Funciton to map reaction w/ components to a cytoscape graph, this is for one step reactions only
+export const mapReactionDataToGraph = (raw_data) => {
+  const data = { ...raw_data };
+  const nodes = [];
+  const edges = [];
+  const raw_reactants = data.reactants;
+  const raw_reagents = data.reagents;
+  const raw_products = data.products;
+
+  // Delete the reactants, reagents, and products from the data object
+  delete data.reactants;
+  delete data.reagents;
+  delete data.products;
+
+  // Push reaction node
+  data.id = data.rxid;
+  data.node_id = data.rxid;
+  data.node_label = data.rxid;
+  data.node_type = "reaction";
+  data.uuid = uuidv4();
+  nodes.push(data);
+
+
+  // Push reactants
+  if (raw_reactants) {
+    raw_reactants.forEach((reactant) => {
+      reactant.id = reactant.inchikey;
+      reactant.node_id = reactant.inchikey;
+      reactant.node_type = "substance";
+      reactant.srole = "sm";
+      reactant.node_label = reactant.inchikey;
+      reactant.uuid = uuidv4();
+      nodes.push(reactant);
+      edges.push({
+        start_node: reactant.inchikey,
+        end_node: data.rxid,
+        edge_label: `${reactant.inchikey}|${data.rxid}`,
+        edge_type: "reactant_of",
+        uuid: uuidv4(),
+      });
+    });
+  }
+
+  // Push reagents
+  if (raw_reagents) {
+    raw_reagents.forEach((reagent) => {
+      reagent.id = reagent.inchikey;
+      reagent.node_id = reagent.inchikey;
+      reagent.node_type = "substance";
+      reagent.srole = "sm";
+      reagent.node_label = reagent.inchikey;
+      reagent.uuid = uuidv4();
+      nodes.push(reagent);
+      edges.push({
+        start_node: reagent.inchikey,
+        end_node: data.rxid,
+        edge_label: `${reagent.inchikey}|${data.rxid}`,
+        edge_type: "reagent_of",
+        uuid: uuidv4(),
+      });
+    });
+  }
+
+  // Push products
+  if (raw_products) {
+    raw_products.forEach((product) => {
+      product.id = product.inchikey;
+      product.node_id = product.inchikey;
+      product.node_type = "substance";
+      product.srole = "tm";
+      product.node_label = product.inchikey;
+      product.uuid = uuidv4();
+      nodes.push(product);
+      edges.push({
+        start_node: data.rxid,
+        end_node: product.inchikey,
+        edge_label: `${data.rxid}|${product.inchikey}`,
+        edge_type: "product_of",
+        uuid: uuidv4(),
+      });
+    });
+  }
+
+  return {
+    nodes,
+    edges,
+  }
+}
+
+// Function to map substance/reaction smiles to a graph
+export const mapGraphWithSmiles = (graph, reactions, substances) => {
+  const nodes = graph.nodes.map((node) => {
+    const nodeType = node.node_type.toLowerCase(); // Cast to lowercase for consistency
+    const mappedNode = node;
+
+    if (["substance"].includes(nodeType)) {
+      const substance = substances.find(
+        (substance) => substance.inchikey === node.node_label
+      );
+      return {
+        ...mappedNode,
+        canonical_smiles: substance.canonical_smiles,
+      };
+    } else if (["reaction"].includes(nodeType)) {
+      const reaction = reactions.find(
+        (reaction) => reaction.rxid === node.node_label
+      );
+      return {
+        ...mappedNode,
+        rxsmiles: reaction.rxsmiles,
+      };
+    }
+  });
+
+  graph.nodes = nodes;
+  return graph;
+};
+
+// default layout options for cytoscape cola
+export const cyOptions = {
+  animate: true, // whether to show the layout as it's running
+  refresh: 1, // number of ticks per frame; higher is faster but more jerky
+  maxSimulationTime: 4000, // max length in ms to run the layout
+  ungrabifyWhileSimulating: false, // so you can't drag nodes during layout
+  fit: true, // on every layout reposition of nodes, fit the viewport
+  padding: 30, // padding around the simulation
+  boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+  nodeDimensionsIncludeLabels: false, // whether labels should be included in determining the space used by a node
+
+  // layout event callbacks
+  ready: function () {}, // on layoutready
+  stop: function () {}, // on layoutstop
+
+  // positioning options
+  randomize: false, // use random node positions at beginning of layout
+  avoidOverlap: true, // if true, prevents overlap of node bounding boxes
+  handleDisconnected: true, // if true, avoids disconnected components from overlapping
+  convergenceThreshold: 0.01, // when the alpha value (system energy) falls below this value, the layout stops
+  nodeSpacing: function (node) {
+    return 10;
+  }, // extra spacing around nodes
+  flow: undefined, // use DAG/tree flow layout if specified, e.g. { axis: 'y', minSeparation: 30 }
+  alignment: undefined, // relative alignment constraints on nodes, e.g. {vertical: [[{node: node1, offset: 0}, {node: node2, offset: 5}]], horizontal: [[{node: node3}, {node: node4}], [{node: node5}, {node: node6}]]}
+  gapInequalities: undefined, // list of inequality constraints for the gap between the nodes, e.g. [{"axis":"y", "left":node1, "right":node2, "gap":25}]
+  centerGraph: true, // adjusts the node positions initially to center the graph (pass false if you want to start the layout from the current position)
+
+  // different methods of specifying edge length
+  // each can be a constant numerical value or a function like `function( edge ){ return 2; }`
+  edgeLength: undefined, // sets edge length directly in simulation
+  edgeSymDiffLength: undefined, // symmetric diff edge length in simulation
+  edgeJaccardLength: undefined, // jaccard edge length in simulation
+
+  // iterations of cola algorithm; uses default values on undefined
+  unconstrIter: undefined, // unconstrained initial layout iterations
+  userConstIter: undefined, // initial layout iterations with user-specified constraints
+  allConstIter: undefined, // initial layout iterations with all constraints including non-overlap
+
+  // hierarchical related options
+  rankDir: "BT", // 'TB' for top to bottom layout, 'BT' for bottom to top, 'LR' for left to right, 'RL' for right to left
+  directed: true, // whether the tree is directed downwards (or edges can point in any direction if false)
+};
+
+export const cyStyles = [
+  {
+    selector: "node",
+    style: {
+      shape: "rectangle",
+      label: "data(id)",
+      "border-width": 1,
+      "border-color": colors.GRAY.dark,
+      "background-color": colors.WHITE.primary,
+      "font-size": "2px",
+      "text-margin-y": "-5px",
+    },
+  },
+  {
+    selector: 'node[nodeType="reaction"]',
+    style: {
+      shape: "rectangle",
+      width: "data(width)",
+      height: "data(height)",
+      "border-color": colors.PINK.primary,
+      "background-color": colors.PINK.primary,
+      "border-width": 2,
+    },
+  },
+  {
+    selector: 'node[srole="sm"]',
+    style: {
+      "border-color": colors.GOLD.primary,
+      "background-color": colors.GOLD.primary,
+    },
+  },
+  {
+    selector: 'node[srole="im"]',
+    style: {
+      "border-color": colors.GRAY.primary,
+      "background-color": colors.GRAY.primary,
+    },
+  },
+  {
+    selector: 'node[srole="tm"]',
+    style: {
+      "border-color": colors.BLUE.primary,
+      "background-color": colors.BLUE.primary,
+      width: "data(width)",
+      height: "data(height)",
+      "border-width": 2,
+    },
+  },
+  {
+    selector: 'node[type="custom"]',
+    style: {
+      "background-image": "data(svg)",
+      "background-fit": "contain",
+    },
+  },
+  {
+    selector: 'node[isPredicted="true"]',
+    style: {
+      "border-style": "dashed",
+    },
+  },
+  {
+    selector: "edge",
+    style: {
+      width: 2,
+      "target-arrow-shape": "vee",
+      "taxi-turn": 20,
+      "taxi-turn-min-distance": 5,
+      "taxi-radius": 10,
+    },
+  },
+  {
+    selector: "edge[edgeType = 'product_of']",
+    style: {
+      "line-color": colors.ORANGE.primary,
+      "target-arrow-color": colors.ORANGE.primary,
+      width: 7,
+    },
+  },
+  {
+    selector: "edge[edgeType = 'reactant_of']",
+    style: {
+      "line-color": colors.BLUE.dark,
+      "target-arrow-color": colors.BLUE.dark,
+    },
+  },
+  {
+    selector: 'edge[isPredicted="true"]',
+    style: {
+      opacity: 0.5,
+      "line-style": "dashed",
+    },
+  },
+  {
+    selector: ".highlighted",
+    style: {
+      // Highlight style for selected nodes/edges
+      "line-color": colors.ORANGE.primary,
+      "target-arrow-color": colors.ORANGE.primary,
+      "border-color": colors.ORANGE.primary,
+      "border-width": 3,
+    },
+  },
+];
+
+export const updateProductEdgeThickness = (thicknessValue = 7) => {
+  const clonedStyles = [...cyStyles];
+  const selectorToUpdate = "edge[edgeType = 'product_of']";
+  const updatedStyle = {
+    width: thicknessValue,
+  };
+  const styleObject = clonedStyles.find(
+    (item) => item.selector === selectorToUpdate
+  );
+
+  if (styleObject) {
+    Object.assign(styleObject.style, updatedStyle); // Merge new styles
+  } else {
+    console.error(`Selector "${selectorToUpdate}" not found!`);
+  }
+
+  return clonedStyles;
+};
+
+export const isDAG = (cy) => {
+  let visited = {}; // Track visited nodes
+  let recStack = {}; // Track nodes in the current recursion stack
+
+  // Helper function to perform DFS, looking for cycles
+  function dfs(node) {
+    if (!visited[node.id()]) {
+      visited[node.id()] = true;
+      recStack[node.id()] = true;
+
+      // Get successors of the node
+      let neighbors = node.outgoers().nodes();
+
+      for (let i = 0; i < neighbors.length; i++) {
+        let neighbor = neighbors[i];
+        if (!visited[neighbor.id()] && dfs(neighbor)) {
+          return true; // Cycle found
+        } else if (recStack[neighbor.id()]) {
+          return true; // Cycle found
+        }
+      }
+    }
+    recStack[node.id()] = false; // Remove the node from recursion stack before backtrack
+    return false; // No cycles found
+  }
+
+  // Iterate over all nodes to check for cycles, considering disconnected components
+  for (let i = 0; i < cy.nodes().length; i++) {
+    if (dfs(cy.nodes()[i])) {
+      return false; // Graph is not a DAG
+    }
+  }
+  return true; // No cycles detected, graph is a DAG
+};
+
+export const requestOptions = {
+  method: "POST",
+  headers: {
+    Accept: "image/svg+xml",
+  },
+};
+
+// create flat array of inchikeys and reactions
+export const getFlatIds = (data) => {
+  const flatArray = [];
+
+  data.forEach((el) => {
+    // we also need to filter out elements that already have svg
+    if (el.data.inchikey && !el.data.svg) {
+      flatArray.push(el.data.inchikey);
+    }
+    if (el.data.rxid) {
+      flatArray.push(el.data.rxid);
+    }
+  });
+
+  return flatArray;
+};
+
+export const mapStylesToCytoscape = (styles, appSettings) => {
+  // clone it to prevent mutation
+  const _styles = [...styles];
+
+  // find the edge style and update it based on current app settings
+  const edgeStyle = _styles.find((style) => style.selector === "edge");
+
+  // additional check to prevent error if edgeStyle is not found
+  if (edgeStyle) {
+    edgeStyle.style["curve-style"] = appSettings.edgeCurveStyle;
+  }
+
+  return _styles;
+};
+
+export const findNodeOrEdgeInGraph = (graph, entityId) => {
+  // First look in graph.nodes
+  let entity = graph.nodes.find((node) => node.node_label === entityId);
+  // If not found look in graph.edges
+  if (!entity) {
+    entity = graph.edges.find((edge) => edge.uuid === entityId);
+  }
+  return entity;
+};
+
+// Function to extract Base64 string from a data URL
+export const extractBase64FromDataURL = (dataURL) => {
+  // Check if the input is a data URL with SVG and base64 encoding
+  const base64Prefix = "data:image/svg+xml;base64,";
+  if (dataURL.startsWith(base64Prefix)) {
+    // Remove the prefix and return only the Base64 string
+    return dataURL.slice(base64Prefix.length);
+  } else {
+    throw new Error("Invalid SVG Base64 data URL format.");
+  }
+};
+
+export const getSvgDimensions = (base64String) => {
+  // Step 1: Decode the base64 string (removing the data URL part if present)
+  const svgData = atob(base64String.split(",")[1]);
+
+  // Step 2: Parse the decoded SVG string into an SVG DOM element
+  const parser = new DOMParser();
+  const svgDoc = parser.parseFromString(svgData, "image/svg+xml");
+  const svgElement = svgDoc.documentElement;
+
+  // Step 3: Extract width and height attributes
+  const width = svgElement.getAttribute("width");
+  const height = svgElement.getAttribute("height");
+
+  // In case width/height are not set, check the viewBox for potential scaling dimensions
+  if (!width || !height) {
+    const viewBox = svgElement.getAttribute("viewBox");
+    if (viewBox) {
+      const viewBoxDimensions = viewBox.split(" ");
+      return {
+        width: viewBoxDimensions[2], // width from viewBox
+        height: viewBoxDimensions[3], // height from viewBox
+      };
+    }
+  }
+
+  return {
+    width: width || "unknown",
+    height: height || "unknown",
+  };
+};
+
+/**
+ * Determines if the input string is in SMILES or InChIKey format.
+ * @param {string} input - The chemical structure representation to validate
+ * @returns {"inchikey" | "smiles" | "unknown"} The detected format type
+ * @throws {Error} If input is null, undefined, or not a string
+ */
+export const isSMILESorInChIKey = (input) => {
+  if (input == null || typeof input !== "string") {
+    throw new Error("Input must be a non-null string");
+  }
+
+  // Regex for InChIKey: 27 characters, 2 dashes at positions 15 and 26
+  const inchiKeyPattern = /^[A-Z0-9]{14}-[A-Z0-9]{10}-[A-Z0-9]{1,2}$/;
+
+  // Basic pattern for SMILES (allows common characters used in SMILES)
+  const smilesPattern = /^[A-Za-z0-9@+\-\[\]\(\)=#\$:%\.\\/,*{}~]+$/;
+
+  if (inchiKeyPattern.test(input)) {
+    return "inchikey";
+  } else if (smilesPattern.test(input)) {
+    return "smiles";
+  } else {
+    return "unknown";
+  }
+};
+
+export const removeAllReagents = (graph) => {
+  // first, find out all nodes that are reagents
+  const reagents = Array.from(
+    new Set(
+      graph
+        .filter((item) => item.data.edgeType === "reagent_of")
+        .map((item) => item.data.source)
+    )
+  );
+
+  // second, find out all nodes that are reactants
+  const reactants = Array.from(
+    new Set(
+      graph
+        .filter((item) => item.data.edgeType === "reactant_of")
+        .map((item) => item.data.source)
+    )
+  );
+
+  // third, find out all nodes that are reagents and not reactants
+  const reagentsNotReactants = reagents.filter(
+    (reagent) => !reactants.includes(reagent)
+  );
+
+  // now, filter out all edges for reagents, then - get rid of reagent nodes
+  return graph
+    .filter((item) => !reagentsNotReactants.includes(item.data.id))
+    .filter((item) => item.data.edgeType !== "reagent_of");
+};
+
+export const duplicateGraphSubstances = (graph) => {
+  /**
+   * Function to duplicate nodes substances within a graph that are reagents/reactants in multiple reactions. Only
+   * substances with the starting material role are duplicated.
+   */
+  // Clone the graph to prevent mutation
+  let new_graph = JSON.parse(JSON.stringify(graph));
+  const substance_nodes = {};
+  const sm_edges_map = {};
+
+  // Loop through all nodes to create substance node map
+  for (const entity of new_graph) {
+    if (entity.data.nodeType && entity.data.nodeType === "substance") {
+      substance_nodes[entity.data.id] = entity;
+    }
+  }
+
+  // Loop through all edges to create sm_edges_map map
+  for (const entity of new_graph) {
+    if (
+      entity.data.edgeType &&
+      (entity.data.edgeType === "reactant_of" ||
+        entity.data.edgeType === "reagent_of")
+    ) {
+      const source = entity.data.source;
+      if (substance_nodes[source].data.srole === "sm") {
+        if (!sm_edges_map[entity.data.source]) {
+          sm_edges_map[entity.data.source] = [];
+        }
+        sm_edges_map[entity.data.source].push(entity);
+      }
+    }
+  }
+
+  // Create list of nodes to duplicate
+  const nodes_to_duplicate = Object.keys(sm_edges_map).filter(
+    (key) => sm_edges_map[key].length > 1
+  );
+
+  // Duplicate nodes and update edges
+  nodes_to_duplicate.forEach((node_id) => {
+    const dup_count = sm_edges_map[node_id].length;
+
+    // Remove the original node
+    new_graph = new_graph.filter((item) => item.data.id !== node_id);
+
+    // Duplicate nodes
+    for (let i = 1; i <= dup_count; i++) {
+      const new_node_id = `${node_id} (${i})`;
+
+      // Add the new node
+      new_graph.push({
+        ...substance_nodes[node_id],
+        data: {
+          ...substance_nodes[node_id].data,
+          id: new_node_id,
+        },
+      });
+
+      // Update the corresponding edge
+      const edge = sm_edges_map[node_id][i - 1];
+      edge.data.source = new_node_id;
+      edge.data.id = `${edge.data.id} (${i})`;
+    }
+  });
+
+  return new_graph;
+};
