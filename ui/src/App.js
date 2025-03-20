@@ -18,7 +18,6 @@ import {
   getReactionSourceByRxid,
   getMoleculeSimpleSvgBySmiles,
   checkApiStatus,
-  getInventoryStatus,
   getInchikeysFromGraph,
 } from "./helpers/apiHelpers";
 
@@ -80,11 +79,7 @@ function App() {
 
     // Get inventory status for all inchikeys presented in the mapped graph
     const grapgInchikeys = getInchikeysFromGraph(mappedGraph);
-    const invStatus = await getInventoryStatus(
-      appSettings.apiUrl,
-      grapgInchikeys
-    );
-    setInventoryStatus(invStatus);
+    setInventoryStatus("UNAVAILABLE");
 
     // populate molecules if any
     mappedGraph.forEach((graphElement) => {
@@ -158,22 +153,6 @@ function App() {
             }
           });
           promises.push(reactionSvgPromise);
-
-          if (isPredicted === "false" || isPredicted === false) {
-            console.log("getting reaction source");
-            // Get reaction source information for non-predicted reactions
-            const reactionSourcePromise = getReactionSourceByRxid(
-              appSettings.apiUrl,
-              rxid
-            ).then((source) => {
-              if (source) {
-                addReactionSource({ [rxid]: source });
-              } else {
-                console.error("Failed to fetch reaction source");
-              }
-            });
-            promises.push(reactionSourcePromise);
-          }
         }
       }
     });

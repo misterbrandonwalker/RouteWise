@@ -1,15 +1,8 @@
-const rxnSmiles2SimpleSvgPath =
-  "api/v1/reaction_utils/svg/simple_rxnsmiles2svg";
-const rxnSmiles2RdkitSvgPath = "api/v1/reaction_utils/svg/rxnsmiles2svg";
-const molSmiles2SimpleSvgPath = "api/v1/substance_utils/svg/simple_smiles2svg";
-const molSmiles2RdkitSvgPath = "api/v1/substance_utils/svg/smiles2svg";
-const rxid2reactionPath = (rxid) => `api/v1/knowledge_base/reactions/${rxid}`;
-const rxid2reactionSource= (rxid) => `api/v1/knowledge_base/reactions/${rxid}/source`;
-const inchikey2substancePath = (inchikey) =>
-  `api/v1/knowledge_base/substances/${inchikey}`;
-const apiStatusPath = "api/v1";
-const inventoryStatusPath = "api/v1/inventory/inventory_status";
-const nextMoveRXNOPath = "api/v1/reaction_utils/nextmove/rxsmiles2rxno";
+const rxnSmiles2SimpleSvgPath = "rxsmiles2svg";
+const rxnSmiles2RdkitSvgPath = "rxsmiles2svg";
+const molSmiles2SimpleSvgPath = "molsmiles2svg";
+const molSmiles2RdkitSvgPath = "molsmiles2svg";
+const apiStatusPath = "status";
 
 // Fetch reaction Simple SVG from rxn smiles
 export const getReactionSimpleSvgByRxsmiles = async (baseUrl, rxsmiles, isPredicted = false, highlightAtoms = true) => {
@@ -129,63 +122,6 @@ export const getMoleculeRdkitSvgBySmiles = async (baseUrl, smiles) => {
   }
 };
 
-// Fetch reaction data from rxid
-export const getExtendedReactionData = async (baseUrl, rxid) => {
-  const url = `${baseUrl}/${rxid2reactionPath(rxid)}`;
-
-  try {
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
-// Fetch reaction data from rxid
-export const getReactionSourceByRxid = async (baseUrl, rxid) => {
-  const url = `${baseUrl}/${rxid2reactionSource(rxid)}`;
-
-  try {
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
-// Fetch substance data from inchikey
-export const getExtendedSubstanceData = async (baseUrl, inchikey) => {
-  const url = `${baseUrl}/${inchikey2substancePath(inchikey)}`;
-
-  try {
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
 const substanceNodes = ["substance"];
 const reactionNodes = ["reaction"];
 
@@ -261,64 +197,6 @@ export const moleculeSmilesToInchikey = async (baseUrl, smiles) => {
   return data.inchikey;
 };
 
-// Get inventory status for passed list of inchikeys
-export const getInventoryStatus = async (
-  baseUrl,
-  inchikeys = []
-) => {
-  const url = `${baseUrl}/${inventoryStatusPath}`;
-  const body = JSON.stringify({ inchikeys });
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: body,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data["inventory_statuses"];
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
 export const getInchikeysFromGraph = (graph = []) => {
   return graph.filter(item => item.data.inchikey !== undefined).map(item => item.data.inchikey);
 }
-
-// Get inventory status for passed list of inchikeys
-export const getRXNOFromNextMove = async (
-  baseUrl,
-  rxsmiles
-) => {
-  const url = `${baseUrl}/${nextMoveRXNOPath}`;
-  const body = JSON.stringify({ rxsmiles });
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: body,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};

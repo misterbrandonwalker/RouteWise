@@ -27,7 +27,7 @@ export const defaultAppSettings = {
   roomId: generateRoomId(),
   graphSize: 50,
   apiUrl: removeTrailingSlashFromHostname(
-    process.env.REACT_APP_API_URL || "http://localhost:8002/synthplanning"
+    process.env.REACT_APP_API_URL || "http://localhost:5099/"
   ),
   appBasePath: process.env.REACT_APP_BASE_PATH || "/",
   staticContentPath:
