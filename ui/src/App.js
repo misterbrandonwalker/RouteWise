@@ -14,9 +14,8 @@ import {
   graphLayouts,
 } from "./helpers/commonHelpers";
 import {
-  getReactionSimpleSvgByRxsmiles,
-  getReactionSourceByRxid,
-  getMoleculeSimpleSvgBySmiles,
+  getReactionRdkitSvgByRxsmiles,
+  getMoleculeRdkitSvgBySmiles,
   checkApiStatus,
   getInchikeysFromGraph,
 } from "./helpers/apiHelpers";
@@ -63,12 +62,6 @@ function App() {
     }));
   };
 
-  const addReactionSource = (reactionSource) => {
-    setReactionSources((prev) => ({
-      ...prev,
-      ...reactionSource,
-    }));
-  };
 
   const updateCytoscapeGraph = async (mappedGraph) => {
     // Array to hold all promises
@@ -78,8 +71,9 @@ function App() {
     setReactionSources({});
 
     // Get inventory status for all inchikeys presented in the mapped graph
-    const grapgInchikeys = getInchikeysFromGraph(mappedGraph);
     setInventoryStatus("UNAVAILABLE");
+
+    console.log("mappedGraph", mappedGraph);
 
     // populate molecules if any
     mappedGraph.forEach((graphElement) => {
@@ -99,7 +93,7 @@ function App() {
         // If SVG is not precompiled, fetch it from Smiles
         if (nodeType === "substance" && graphElement.data.canonical_smiles) {
           const smiles = graphElement.data.canonical_smiles;
-          const substancePromise = getMoleculeSimpleSvgBySmiles(
+          const substancePromise = getMoleculeRdkitSvgBySmiles(
             appSettings.apiUrl,
             smiles
           ).then((svg) => {
@@ -132,7 +126,7 @@ function App() {
           const { rxid, rxsmiles, isPredicted } = graphElement.data;
 
           // Get reaction SVG
-          const reactionSvgPromise = getReactionSimpleSvgByRxsmiles(
+          const reactionSvgPromise = getReactionRdkitSvgByRxsmiles(
             appSettings.apiUrl,
             rxsmiles,
             isPredicted,

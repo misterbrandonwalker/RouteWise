@@ -1,123 +1,58 @@
-const rxnSmiles2SimpleSvgPath = "rxsmiles2svg";
 const rxnSmiles2RdkitSvgPath = "rxsmiles2svg";
-const molSmiles2SimpleSvgPath = "molsmiles2svg";
 const molSmiles2RdkitSvgPath = "molsmiles2svg";
 const apiStatusPath = "status";
 
-// Fetch reaction Simple SVG from rxn smiles
-export const getReactionSimpleSvgByRxsmiles = async (baseUrl, rxsmiles, isPredicted = false, highlightAtoms = true) => {
-  const url = `${baseUrl}/${rxnSmiles2SimpleSvgPath}`;
-  const body = JSON.stringify({
-    rxsmiles,
-    base64_encode: true,
-    retro: isPredicted,
-    highlight_atoms: highlightAtoms,
-  });
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: body,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data["svg"];
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
 
 // Fetch reaction full RDKIT SVG from rxn smiles
 export const getReactionRdkitSvgByRxsmiles = async (baseUrl, rxsmiles) => {
-  const url = `${baseUrl}/${rxnSmiles2RdkitSvgPath}`;
-  const body = JSON.stringify({
-    rxsmiles: rxsmiles,
-    depiction_mode: "simple",
-    monochrome_atoms: true,
-    base64_encode: true,
-  });
+  // Encode the rxsmiles string to ensure it's safely passed in the URL
+  const encodedRxsmiles = encodeURIComponent(rxsmiles);
+
+  // Construct the URL with query parameters
+  const url = `${baseUrl.trim()}/${rxnSmiles2RdkitSvgPath}?rxsmiles=${encodedRxsmiles}&highlight=true&img_width=1800&img_height=600&base64_encode=true`;
+
+  console.log("Fetching from:", url);
 
   try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: body,
-    });
+    // Perform the GET request without a body and without headers
+    const response = await fetch(url);
 
+    // Check if the response is successful
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
     }
 
+    // Assuming the response contains an "svg" field
     const data = await response.json();
-    return data["svg"];
+    return data["svg_base64"];
   } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
-// Fetch molecule Simple SVG from inchikey
-export const getMoleculeSimpleSvgBySmiles = async (baseUrl, smiles) => {
-  const url = `${baseUrl}/${molSmiles2SimpleSvgPath}`;
-  const body = JSON.stringify({ smiles: smiles, base64_encode: true });
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: body,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data["svg"];
-  } catch (error) {
-    console.error(error);
+    console.error("Error fetching SVG:", error);
     return null;
   }
 };
 
 // Fetch molecule full RDKIT SVG from inchikey
 export const getMoleculeRdkitSvgBySmiles = async (baseUrl, smiles) => {
-  const url = `${baseUrl}/${molSmiles2RdkitSvgPath}`;
-  const body = JSON.stringify({
-    smiles: smiles,
-    monochrome_atoms: true,
-    base64_encode: true,
-  });
+  // Construct the URL with query parameters
+  const encodedSmiles = encodeURIComponent(smiles);
+  const url = `${baseUrl.trim()}/${molSmiles2RdkitSvgPath}?mol_smiles=${encodedSmiles}&img_width=300&img_height=300&base64_encode=true`;
+
+  console.log("Fetching from:", url);
 
   try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: body,
-    });
+    // Perform the GET request without a body or custom headers
+    const response = await fetch(url);
 
+    // Check if the response is successful
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
     }
 
+    // Assuming the response contains an "svg" field
     const data = await response.json();
-    return data["svg"];
+    return data["svg_base64"];
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching SVG:", error);
     return null;
   }
 };
@@ -155,7 +90,7 @@ export const mapAicpGraphWithSVG = async (baseUrl, aicpGraph) => {
 
 export const checkApiStatus = async (baseUrl) => {
   try {
-    const url = `${baseUrl}/${apiStatusPath}`;
+    const url = `${baseUrl.trim()}/${apiStatusPath}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -178,11 +113,11 @@ export const checkApiStatus = async (baseUrl) => {
 };
 
 export const moleculeSmilesToInchikey = async (baseUrl, smiles) => {
-  const url = `${baseUrl}/api/v1/substance_utils/smiles2inchikey`;
+  const url = `${baseUrl.trim()}/api/v1/substance_utils/smiles2inchikey`;
   const body = JSON.stringify({ smiles: smiles });
 
   const response = await fetch(url, {
-    method: "POST",
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },

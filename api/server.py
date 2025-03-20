@@ -2,8 +2,8 @@
 #
 # Organization: National Center for Advancing Translational Sciences (NCATS/NIH)
 
-from typing import Dict, List, Optional
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPException, Query, BackgroundTasks
+from typing import List, Optional
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPException, Query
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware

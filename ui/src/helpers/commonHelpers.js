@@ -27,7 +27,7 @@ export const defaultAppSettings = {
   roomId: generateRoomId(),
   graphSize: 50,
   apiUrl: removeTrailingSlashFromHostname(
-    process.env.REACT_APP_API_URL || "http://localhost:5099/"
+    process.env.REACT_APP_API_URL || "http://0.0.0.0:5099 /"
   ),
   appBasePath: process.env.REACT_APP_BASE_PATH || "/",
   staticContentPath:
@@ -667,4 +667,20 @@ export const duplicateGraphSubstances = (graph) => {
   });
 
   return new_graph;
+};
+
+export const convertCytoscapeToNormalFormat = (cytoData) => {
+  const convertedData = {};
+
+  // If there are nodes, process them
+  if (cytoData.elements && cytoData.elements.nodes) {
+    convertedData.nodes = cytoData.elements.nodes.map((node) => node.data);  // Extracting the `data` field from each node
+  }
+
+  // If there are edges, process them
+  if (cytoData.elements && cytoData.elements.edges) {
+    convertedData.edges = cytoData.elements.edges.map((edge) => edge.data);  // Extracting the `data` field from each edge
+  }
+
+  return convertedData;
 };

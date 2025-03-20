@@ -4,7 +4,6 @@ import Draggable from "react-draggable";
 import { Button, Typography } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { extractBase64FromDataURL } from "../helpers/commonHelpers";
-import { getRXNOFromNextMove } from "../helpers/apiHelpers";
 
 const { Text } = Typography;
 
@@ -57,22 +56,6 @@ const EntityInformation = () => {
         nodeInfo.base64svg = extractBase64FromDataURL(nodeSvgs[entityId]);
       }
 
-      // fetch RXN Name and classification if node is reaction
-      const nodeType = nodeInfo.node_type.toLowerCase();
-      if (nodeType === "reaction") {
-        const rxno = await getRXNOFromNextMove(
-          appSettings.apiUrl,
-          nodeInfo.rxsmiles
-        );
-
-        if (!!rxno.rxname) {
-          nodeInfo.rxname = rxno.rxname;
-        }
-
-        if (!!rxno.rxclass) {
-          nodeInfo.rxclass = rxno.rxclass;
-        }
-      }
       return nodeInfo;
     } else if (entityType === "edge") {
       return aicpGraph.edges.find((edge) => edge.uuid === entityId); // edge id is uuid

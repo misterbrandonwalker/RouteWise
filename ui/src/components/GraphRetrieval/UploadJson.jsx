@@ -2,14 +2,13 @@ import React, { useState, useContext } from "react";
 import { Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { MainContext } from "../../contexts/MainContext";
-import { mapGraphDataToCytoscape } from "../../helpers/commonHelpers";
+import { mapGraphDataToCytoscape, convertCytoscapeToNormalFormat } from "../../helpers/commonHelpers";
 
-const UploadJson = () => {
+const UploadJson = ({ convertToNormalFormat = false }) => {
   const [jsonFile, setJsonFile] = useState(null);
   const [open, setOpen] = useState(false);
 
-  const { setAicpGraph, updateCytoscapeGraph } =
-    useContext(MainContext);
+  const { setAicpGraph, updateCytoscapeGraph } = useContext(MainContext);
 
   const handleJsonChange = async (info) => {
     const fileList = [...info.fileList]; // Copy the file list to avoid mutation
@@ -46,10 +45,18 @@ const UploadJson = () => {
       // parse JSON file content
       const data = JSON.parse(fileContent);
 
-      // Update the graph with the new data
-      setAicpGraph(data);
-      const mappedData = mapGraphDataToCytoscape(data);
+      // If we need to convert from Cytoscape format, call the conversion function
+      const finalData = convertToNormalFormat
+        ? convertCytoscapeToNormalFormat(data)
+        : data;
+
+      // Update the graph with the final data
+      setAicpGraph(finalData);
+
+
+      const mappedData = mapGraphDataToCytoscape(finalData);
       updateCytoscapeGraph(mappedData);
+
 
       setJsonFile(null); // Clear the file after successful upload
       setOpen(false); // Close the popover
@@ -60,7 +67,7 @@ const UploadJson = () => {
         : 'Unable to process graph data. Please ensure correct format.';
       message.error({ content: errorMessage, key: 'upload' });
       setAicpGraph(null);
-      setJsonFile(null); // Clear the file after successful upload
+      setJsonFile(null); // Clear the file after unsuccessful upload
       setOpen(false);
     }
   };
