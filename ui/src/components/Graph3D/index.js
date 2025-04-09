@@ -1,1 +1,0 @@
-export { Graph3D as default } from './Graph3D';
