@@ -12,3 +12,4 @@ dependencies:
       - uvicorn[standard]
       - requests
       - python-multipart
+      - werkzeug

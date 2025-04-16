@@ -31,6 +31,8 @@ from rdkit_utils import (
     is_reaction_valid
 )
 from role_assigner_utils import RxsmilesAtomMappingException
+import re
+from werkzeug.utils import secure_filename
 
 CYTOSCAPE_URL = "http://localhost:1234/v1"
 DEFAULT_STYLE_NAME = "New SynGPS API"
@@ -137,10 +139,25 @@ DATA_DIR = "data"
 # Ensure the data directory exists
 os.makedirs(DATA_DIR, exist_ok=True)
 
+# Check if filename is valid
+def is_valid_filename(filename):
+    # Only allow alphanumerics, dashes, underscores, and a single dot for .json
+    # Filename should not contain directory separators or more than one dot
+    return (
+        re.match(r'^[\w\-]+$', filename) is not None
+    )
 
-# Save room data to file
+# Save room data
 def save_room_data(room_id, data):
-    room_file = os.path.join(DATA_DIR, f"{room_id}.json")
+    # Step 1: Clean filename using werkzeug
+    filename = secure_filename(room_id)
+
+    # Step 2: Custom validation
+    if not is_valid_filename(filename):
+        raise ValueError(f"Invalid room ID: {room_id}")
+
+    # Step 3: Save as .json
+    room_file = os.path.join(DATA_DIR, f"{filename}.json")
     with open(room_file, "w") as file:
         json.dump(data, file)
 
@@ -465,7 +482,7 @@ def send_to_cytoscape(network_json: dict = load_example_payload(), layout_type: 
     except ValueError as e:
         # Log the value error
         logger.error(f"Error: {e}")
-        return {"error": str(e)}
+        return {"error": "Failed to upload network to cytoscape."}
 
 
 
