@@ -5,6 +5,10 @@ import { Button, Typography } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { extractBase64FromDataURL } from "../helpers/commonHelpers";
 
+const formatLabel = (key) => {
+  return key.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
 const { Text } = Typography;
 
 const EntityInformation = () => {
@@ -32,6 +36,7 @@ const EntityInformation = () => {
   const [expandSourceInfo, setExpandSourceInfo] = useState(false);
 
   const nodeRef = useRef(null);
+  const [expandConditionInfo, setExpandConditionInfo] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -269,26 +274,12 @@ const fillEntityData = async () => {
                                   : "N/A"}
                               </Text>
                             </p>
-                            <p>
-                              <Text>
-                                <b>In Savi:</b>{" "}
-                                {entityInfo.is_in_savi_130k ? "Yes" : "No"}
-                              </Text>
-                            </p>
-                            <p>
-                              <Text>
-                                <b>In ASPIRE Benchmark RXNs:</b>{" "}
-                                {entityInfo.is_in_aicp ? "Yes" : "No"}
-                              </Text>
-                            </p>
                             <div>
-                              <Text>
-                                <b>In USPTO:</b>{" "}
-                                {entityInfo.is_in_uspto_full ? "Yes" : "No"}
-                              </Text>
+                              <p>
                               <Text>
                                 <b>Inventory Status:</b> {entityInfo?.inventory?.available === undefined ? "Unknown" : entityInfo?.inventory?.available ? "Available" : "Not Available"}
                               </Text>
+                              </p>
                             </div>
                           </>
                         )}
@@ -307,12 +298,7 @@ const fillEntityData = async () => {
                     <>
                       <p>
                         <Text copyable={{ text: entityInfo.rxid }}>
-                          <b>
-                            {String(entityInfo.rxid).startsWith("ASPIRE")
-                              ? "ASPIRE RXID"
-                              : "RXID"}
-                            :
-                          </b>{" "}
+                          <b>RXID:</b>{" "}
                           {entityInfo.rxid}
                         </Text>
                       </p>
@@ -361,7 +347,7 @@ const fillEntityData = async () => {
                       </p>
                       <p>
                         <Text>
-                          <b>RX Valid:</b> {entityInfo.is_valid !== undefined ? entityInfo.is_valid.toString() : "N/A"}
+                          <b>RX Valid:</b> {entityInfo.is_valid !== undefined && entityInfo.is_valid !== null ? entityInfo.is_valid.toString() : "N/A"}
                         </Text>
                       </p>
                       <p>
@@ -378,36 +364,55 @@ const fillEntityData = async () => {
                           >
                             [{expandSourceInfo ? "hide" : "show"}]
                           </span>
-                        </p>
+                        </p>,
+                        <>
+                          <p>
+                            <b>Source Information:</b>{" "}
+                            <span
+                              className="link-like"
+                              onClick={() => setExpandSourceInfo(!expandSourceInfo)}
+                            >
+                              [{expandSourceInfo ? "hide" : "show"}]
+                            </span>
+                          </p>
+                          {expandSourceInfo && (
+                            <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem" }}>
+                              <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+                                {entityInfo.provenance &&
+                                  Object.entries(entityInfo.provenance).map(([key, value]) => (
+                                    <Text key={key}>
+                                      <b>{formatLabel(key)}:</b> {Array.isArray(value) ? value.join(", ") : String(value)}
+                                    </Text>
+                                  ))}
+                              </div>
+                            </div>
+                          )}
+                          <p>
+                            <b>Conditions Information:</b>{" "}
+                            <span
+                              className="link-like"
+                              onClick={() => setExpandConditionInfo(!expandConditionInfo)}
+                            >
+                              [{expandConditionInfo ? "hide" : "show"}]
+                            </span>
+                          </p>
+                          {expandConditionInfo && entityInfo.conditions_info && (
+                            <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem" }}>
+                              {Object.entries(entityInfo.conditions_info).map(([parentKey, value]) => (
+                                <p key={parentKey}>
+                                  <Text>
+                                    <b>Parent Key:</b> {parentKey} <br />
+                                    <b>Conditions Text:</b> {value.conditions_text}
+                                  </Text>
+                                </p>
+                              ))}
+                            </div>
+                          )}
+                        </>
+
+                        
                       )}
-                      {isAskcosNode === false && expandSourceInfo && (
-                        <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem" }}>
-                          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-                            <Text>
-                              <b>In Savi:</b> {entityInfo.is_in_savi_130k ? "Yes" : "No"}
-                            </Text>
-                            <Text>
-                              <b>In USPTO:</b> {entityInfo.is_in_uspto_full ? "Yes" : "No"}
-                            </Text>
-                          <Text>
-                            <b>Inventory Status:</b> {entityInfo?.inventory?.availability === "false" ? "Not Available" : "Available" || "Not Available"}
-                          </Text>
-                            <Text>
-                              <b>In ASPIRE Benchmark RXNs:</b> {entityInfo.is_in_aicp ? "Yes" : "No"}
-                            </Text>
-                          </div>
-                          {reactionSources[entityInfo.rxid] && <p>
-                            <Text copyable={{ text: reactionSources[entityInfo.rxid]['rxsmiles_original'] }}>
-                              <b>Original RXSmiles:</b> {reactionSources[entityInfo.rxid]['rxsmiles_original'] }
-                            </Text>
-                          </p>}
-                          {reactionSources[entityInfo.rxid] && reactionSources[entityInfo.rxid]['patent_number'] && <p>
-                            <Text>
-                              <b>USPTO Patent:</b> {reactionSources[entityInfo.rxid]['patent_number']} - Paragraph: {reactionSources[entityInfo.rxid]['paragraph_number']}
-                            </Text>
-                          </p>}
-                        </div>
-                      )}
+
                     </>
                   )}
 

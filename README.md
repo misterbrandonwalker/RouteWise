@@ -27,6 +27,7 @@
      - During the role normalization process, the fragment indices in the fragment-section of the RXSMILES extension (|f:u.v,w.x|) are automatically updated as necessary to reflect the position of the fragments of substances at the end of the process.
 
 - **Send To Cytoscape Button**: Allows users to send the current graph to Cytoscape. Ensure Cytoscape is running in the background for this feature to work.
+- **Route Selection Dropdown**: Includes the "SynthGraph" option to view the synthesis graph itself. Evidence routes are labeled as "Evidence 0", "Evidence 1", etc., and predicted routes are labeled as "Predicted 0", "Predicted 1", etc. For massive graphs with cycles (e.g., ASKCOS examples), use the force-directed layout for rendering.
 - **AICP/Cytoscape JSON Toggle**: Enables users to view JSON data in different formats, including AICP and Cytoscape formats.
 - **Upload JSON Functionality**: Provides options to upload JSON files, Cytoscape JSON files, and select example graphs from a dropdown menu. Users can also refer to the Jupyter notebook example for uploading JSON or use the Swagger documentation available at [http://0.0.0.0:5099/api/v1/docs/aicp/nv_api](http://0.0.0.0:5099/api/v1/docs/aicp/nv_api).
 - **Example Graphs**: Includes two evidence-based route examples and an ASKCOS Route Sample. The ASKCOS Route Sample is parsed and converted internally into the graph format before rendering.
@@ -139,11 +140,11 @@ Mandatory fields/attributes are marked with `*`.
 | `rxid` | _Works with reaction nodes only:_ The reaction identifier |
 | `rxsmiles` | _Works with reaction nodes only:_ SMILES representation of the reaction |
 | `yield_info` | _Works with reaction nodes only:_ Contains information on predicted yield and yield score. Options: <br> - `yield_predicted`: Predicted yield value <br> - `yield_score`: Yield score (e.g., a numerical score) |
-| `provenance` | _Works with reaction nodes only:_ Indicates if the reaction is in the USPTO and SAVI. Options: <br> - `is_in_uspto`: Boolean indicating if the reaction is in USPTO <br> - `is_in_savi`: Boolean indicating if the reaction is in SAVI |
+| `provenance` | _Works with reaction nodes only:_ Indicates if the reaction is in the USPTO and SAVI. Options: <br> - `is_in_uspto`: Boolean indicating if the reaction is in USPTO <br> - `is_in_savi`: Boolean indicating if the reaction is in SAVI <br> - `Patents`: Optional list of patent names associated with the reaction |
 | `rxname` | _Works with reaction nodes only:_ Name of the reaction. |
 | `is_rxname_recognized` | _Works with reaction nodes only:_ Indicates whether the reaction name is recognized. |
 | `rxclass` | _Works with reaction nodes only:_ Class of the reaction. |
-| `validation` | _Works with reaction nodes only:_ Indicates whether the reaction is balanced or not. Options: <br> - `is_balanced`: Boolean indicating if the reaction is balanced |
+| `conditions_info` | _Works with reaction nodes only:_ Optional field containing `conditions_text`, which is a paragraph describing the reaction conditions. |
 | `route_assembly_type` | _Works with both node types:_ Indicates whether the route is predicted or based on evidence. Options: <br> - `is_predicted`: Boolean indicating if the route is predicted <br> - `is_evidence`: Boolean indicating if the route is based on evidence |
 
 
