@@ -162,7 +162,49 @@ In the following table below you'll find all supported parameters for the **edge
 
 ---
 
-### Manual Setup (Without Docker)
+### Inventory Information
+
+The `availability` section in the JSON file provides detailed inventory information for substances. Below is an example JSON structure for a single substance:
+
+```json
+{
+  "inchikey": "",
+  "inventory": {
+    "available": false,
+    "locations": [
+      {
+        "smiles": "",
+        "room": "",
+        "position": "",
+        "quantity_weight": "",
+        "unit": ""
+      }
+    ]
+  },
+  "commercial_availability": {
+    "available": false,
+    "vendors": [
+      {
+        "smiles": "",
+        "source": "",
+        "ppg": "",
+        "lead_time": "",
+        "url": ""
+      }
+    ]
+  }
+}
+```
+
+#### Field Descriptions
+
+| Attribute | Description |
+| --- | --- |
+| `inchikey` | The InChIKey identifier for the substance. |
+| `inventory` | Contains information about the substance's availability in inventory. Options: <br> - `available`: Boolean indicating if the substance is available in inventory. <br> - `locations`: Array of objects specifying the location details. Each object includes: <br> &nbsp;&nbsp;&nbsp;&nbsp;- `smiles`: SMILES representation of the substance. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `room`: Room where the substance is stored. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `position`: Position within the room. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `quantity_weight`: Weight of the substance. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `unit`: Unit of measurement for the weight. |
+| `commercial_availability` | Contains information about the substance's commercial availability. Options: <br> - `available`: Boolean indicating if the substance is commercially available. <br> - `vendors`: Array of objects specifying vendor details. Each object includes: <br> &nbsp;&nbsp;&nbsp;&nbsp;- `smiles`: SMILES representation of the substance. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `source`: Source/vendor name. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `ppg`: Price per gram. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `lead_time`: Lead time for delivery. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `url`: URL for the vendor's product page. |
+
+---
 
 
 #### UI Setup
@@ -216,5 +258,3 @@ To ensure you have the latest updates for this repository, you can use the follo
 ```bash
 git pull
 ```
-
-This will fetch and merge changes from the remote repository into your local copy.
