@@ -144,7 +144,7 @@ Mandatory fields/attributes are marked with `*`.
 | `rxname` | _Works with reaction nodes only:_ Name of the reaction. |
 | `is_rxname_recognized` | _Works with reaction nodes only:_ Indicates whether the reaction name is recognized. |
 | `rxclass` | _Works with reaction nodes only:_ Class of the reaction. |
-| `conditions_info` | _Works with reaction nodes only:_ Optional field containing `conditions_text`, which is a paragraph describing the reaction conditions. |
+| `conditions_info` | _Works with reaction nodes only:_ Optional field containing keys associated with parent identifiers (e.g., patent IDs). Each key maps to a dictionary that includes `conditions_text`, which is a paragraph describing the reaction conditions. |
 | `route_assembly_type` | _Works with both node types:_ Indicates whether the route is predicted or based on evidence. Options: <br> - `is_predicted`: Boolean indicating if the route is predicted <br> - `is_evidence`: Boolean indicating if the route is based on evidence |
 
 
