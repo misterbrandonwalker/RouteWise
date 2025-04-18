@@ -260,7 +260,10 @@ room_connections = {}
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     # Generate a unique room ID
-    room_id = str(uuid.uuid4())
+    while True:
+        room_id = str(uuid.uuid4())
+        if room_id not in room_connections:
+            break
     room_connections[room_id] = websocket
 
     await websocket.accept()
