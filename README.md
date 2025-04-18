@@ -139,6 +139,7 @@ Mandatory fields/attributes are marked with `*`.
 | `uuid` | Unique identifier for the node |
 | `rxid` | _Works with reaction nodes only:_ The reaction identifier |
 | `rxsmiles` | _Works with reaction nodes only:_ SMILES representation of the reaction |
+| `original_rxsmiles` | _Works with reaction nodes only:_ The original SMILES representation of the reaction before any modifications. |
 | `yield_info` | _Works with reaction nodes only:_ Contains information on predicted yield and yield score. Options: <br> - `yield_predicted`: Predicted yield value <br> - `yield_score`: Yield score (e.g., a numerical score) |
 | `provenance` | _Works with reaction nodes only:_ Indicates if the reaction is in the USPTO and SAVI. Options: <br> - `is_in_uspto`: Boolean indicating if the reaction is in USPTO <br> - `is_in_savi`: Boolean indicating if the reaction is in SAVI <br> - `Patents`: Optional list of patent names associated with the reaction |
 | `rxname` | _Works with reaction nodes only:_ Name of the reaction. |

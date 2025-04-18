@@ -37,6 +37,7 @@ const EntityInformation = () => {
 
   const nodeRef = useRef(null);
   const [expandConditionInfo, setExpandConditionInfo] = useState(false);
+  const [expandOriginalSmiles, setExpandOriginalSmiles] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -317,6 +318,24 @@ const fillEntityData = async () => {
                             copyable={{ text: entityInfo.rxsmiles || "N/A" }}
                           >
                             {entityInfo.rxsmiles || "N/A"}
+                          </Text>
+                        </p>
+                      )}
+                      <p>
+                        <b>Original RX SMILES:</b>{" "}
+                        <span
+                          className="link-like"
+                          onClick={() => setExpandOriginalSmiles(!expandOriginalSmiles)}
+                        >
+                          [{expandOriginalSmiles ? "hide" : "show"}]
+                        </span>
+                      </p>
+                      {expandOriginalSmiles && (
+                        <p>
+                          <Text
+                            copyable={{ text: entityInfo.original_rxsmiles || "N/A" }}
+                          >
+                            {entityInfo.original_rxsmiles || "N/A"}
                           </Text>
                         </p>
                       )}
