@@ -132,10 +132,10 @@ export const mapGraphDataToCytoscape = (data, subgraphIndex = 0) => {
           : null,
         type: flatNode.base64svg || flatNode.srole === "tm" ? "custom" : null,
         nodeType,
-        is_valid: String(flatNode.is_valid || ""),
+        is_valid: String(flatNode.is_valid ?? ""),
         ...flatNode,
-        provenance: flatNode.provenance || {},
-        conditions_info: flatNode.conditions_info || {},
+        provenance: flatNode.provenance ?? {},
+        conditions_info: flatNode.conditions_info ?? {},
       },
     };
   });
