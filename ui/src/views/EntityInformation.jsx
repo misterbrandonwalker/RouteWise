@@ -34,10 +34,14 @@ const EntityInformation = () => {
   const [isAskcosNode, setIsAskcosNode] = useState(false);
   const [expandSmiles, setExpandSmiles] = useState(false);
   const [expandSourceInfo, setExpandSourceInfo] = useState(false);
+  
 
   const nodeRef = useRef(null);
-  const [expandConditionInfo, setExpandConditionInfo] = useState(false);
+  const [expandEvidenceConditionInfo, setExpandEvidenceConditionInfo] = useState(false);
+  const [expandInventoryLocations, setExpandInventoryLocations] = useState(false);
+  const [expandPredictedConditionInfo, setExpandPredictedConditionInfo] = useState(false);
   const [expandOriginalSmiles, setExpandOriginalSmiles] = useState(false);
+  const [expandCommercialVendors, setExpandCommercialVendors] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -82,7 +86,11 @@ const EntityInformation = () => {
     (item) => item.inchikey === nodeInfo.node_label
   );
   nodeInfo.inventory = availabilityItem
-    ? { available: availabilityItem.inventory?.available || false }
+    ? { ...availabilityItem.inventory, available: availabilityItem.inventory?.available || false }
+    : { available: false };
+
+  nodeInfo.commercial_availability = availabilityItem
+    ? { ...availabilityItem.commercial_availability, vendors: availabilityItem.commercial_availability?.vendors || [], available: availabilityItem.commercial_availability?.available || false }
     : { available: false };
 }
 return nodeInfo;
@@ -281,6 +289,82 @@ const fillEntityData = async () => {
                                 <b>Inventory Status:</b> {entityInfo?.inventory?.available === undefined ? "Unknown" : entityInfo?.inventory?.available ? "Available" : "Not Available"}
                               </Text>
                               </p>
+                              {entityInfo?.inventory?.available && entityInfo?.inventory?.locations && (
+                                <>
+                                  <p>
+                                    <Text>
+                                      <b>Inventory Locations:</b>{" "}
+                                      <span
+                                        className="link-like"
+                                        onClick={() => setExpandInventoryLocations(!expandInventoryLocations)}
+                                      >
+                                        [{expandInventoryLocations ? "hide" : "show"}]
+                                      </span>
+                                    </Text>
+                                  </p>
+                                  {expandInventoryLocations && (
+                                    <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem", marginTop: "0.5rem" }}>
+                                      {entityInfo.inventory.locations.map((location, index) => (
+                                        <div key={index} style={{ marginBottom: "1rem" }}>
+                                          {Object.entries(location).map(([key, value]) => (
+                                            <p key={key}>
+                                              <Text>
+                                                <b>{formatLabel(key)}:</b> {value || "N/A"}
+                                              </Text>
+                                            </p>
+                                          ))}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                              {entityInfo?.commercial_availability && (
+                                <div style={{ marginTop: "1rem" }}>
+                                  <p>
+                                    <Text>
+                                      <b>Commercial Availability:</b> {entityInfo.commercial_availability.available ? "Available" : "Not Available"}
+                                    </Text>
+                                  </p>
+                                </div>
+                              )}
+                              {entityInfo?.commercial_availability?.available && entityInfo?.commercial_availability?.vendors && (
+                                <>
+                                  <p>
+                                    <Text>
+                                      <b>Commercial Vendors:</b>{" "}
+                                      <span
+                                        className="link-like"
+                                        onClick={() => setExpandCommercialVendors(!expandCommercialVendors)}
+                                      >
+                                        [{expandCommercialVendors ? "hide" : "show"}]
+                                      </span>
+                                    </Text>
+                                  </p>
+                                  {expandCommercialVendors && (
+                                    <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem", marginTop: "0.5rem" }}>
+                                      {entityInfo.commercial_availability.vendors.map((vendor, index) => (
+                                        <div key={index} style={{ marginBottom: "1rem" }}>
+                                          {Object.entries(vendor).map(([key, value]) => (
+                                            <p key={key}>
+                                              <Text>
+                                                <b>{formatLabel(key)}:</b>{" "}
+                                                {key === "url" ? (
+                                                  <a href={value.startsWith("http") ? value : `https://${value}`} target="_blank" rel="noopener noreferrer">
+                                                    {value}
+                                                  </a>
+                                                ) : (
+                                                  value || "N/A"
+                                                )}
+                                              </Text>
+                                            </p>
+                                          ))}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </>
+                              )}
                             </div>
                           </>
                         )}
@@ -407,23 +491,109 @@ const fillEntityData = async () => {
                             </div>
                           )}
                           <p>
-                            <b>Conditions Information:</b>{" "}
+                            <b>Evidence Protocol:</b>{" "}
                             <span
                               className="link-like"
-                              onClick={() => setExpandConditionInfo(!expandConditionInfo)}
+                              onClick={() => setExpandEvidenceConditionInfo(!expandEvidenceConditionInfo)}
                             >
-                              [{expandConditionInfo ? "hide" : "show"}]
+                              [{expandEvidenceConditionInfo ? "hide" : "show"}]
                             </span>
                           </p>
-                          {expandConditionInfo && entityInfo.conditions_info && (
+                          {expandEvidenceConditionInfo && entityInfo.evidence_protocol && (
                             <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem" }}>
-                              {Object.entries(entityInfo.conditions_info).map(([parentKey, value]) => (
-                                <p key={parentKey}>
+                              {Object.entries(entityInfo.evidence_protocol).map(([key, value]) => (
+                                <div key={key} style={{ marginBottom: "1rem" }}>
                                   <Text>
-                                    <b>Parent Key:</b> {parentKey} <br />
-                                    <b>Conditions Text:</b> {value.conditions_text}
+                                    <b>{key}:</b>
                                   </Text>
-                                </p>
+                                  <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem", marginTop: "0.5rem" }}>
+                                    <p>
+                                      <Text>
+                                        {value.protocol_text}
+                                      </Text>
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          <p>
+                            <b>Evidence Conditions Information:</b>{" "}
+                            <span
+                              className="link-like"
+                              onClick={() => setExpandEvidenceConditionInfo(!expandEvidenceConditionInfo)}
+                            >
+                              [{expandEvidenceConditionInfo ? "hide" : "show"}]
+                            </span>
+                          </p>
+                          {expandEvidenceConditionInfo && entityInfo.evidence_conditions_info && (
+                            <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem" }}>
+                              {Object.entries(entityInfo.evidence_conditions_info).map(([mainKey, subValue]) => (
+                                <div key={mainKey} style={{ marginBottom: "1rem" }}>
+                                  <Text>
+                                    <b>{mainKey}:</b>
+                                  </Text>
+                                  <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem", marginTop: "0.5rem" }}>
+                                    {Object.entries(subValue).map(([subKey, subVal]) => (
+                                      <p key={subKey}>
+                                        <Text>
+                                          <b>{formatLabel(subKey)}:</b> {subVal}
+                                        </Text>
+                                      </p>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          <p>
+                            <b>Predicted Conditions Information:</b>{" "}
+                            <span
+                              className="link-like"
+                              onClick={() => setExpandPredictedConditionInfo(!expandPredictedConditionInfo)}
+                            >
+                              [{expandPredictedConditionInfo ? "hide" : "show"}]
+                            </span>
+                          </p>
+                          {expandPredictedConditionInfo && entityInfo.predicted_conditions_info && (
+                            <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem" }}>
+                              {Object.entries(entityInfo.predicted_conditions_info).map(([methodKey, methodValue]) => (
+                                <div key={methodKey} style={{ marginBottom: "1rem" }}>
+                                  <Text>
+                                    <b>Method:</b>
+                                  </Text>
+                                  <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem", marginTop: "0.5rem" }}>
+                                    {Object.entries(methodValue).map(([predictionKey, predictionValue]) => (
+                                      <div key={predictionKey} style={{ marginBottom: "1rem" }}>
+                                        <div style={{ marginBottom: "1rem" }}>
+                                          <Text>
+                                            <b>{predictionKey}:</b>
+                                          </Text>
+                                          <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem", marginTop: "0.5rem" }}>
+                                            {Object.entries(predictionValue).map(([key, val]) => (
+                                              <div key={key} style={{ marginBottom: "0.5rem" }}>
+                                                <Text>
+                                                  <b>{formatLabel(key)}:</b>
+                                                </Text>
+                                                <div style={{ borderLeft: "2px solid #1890ff", paddingLeft: "1rem", marginTop: "0.5rem" }}>
+                                                  {typeof val === "object" && val !== null
+                                                    ? Object.entries(val).map(([innerKey, innerVal]) => (
+                                                        <p key={innerKey}>
+                                                          <Text>
+                                                            <b>{formatLabel(innerKey)}:</b> {innerVal}
+                                                          </Text>
+                                                        </p>
+                                                      ))
+                                                    : <Text>{val}</Text>}
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
                               ))}
                             </div>
                           )}
