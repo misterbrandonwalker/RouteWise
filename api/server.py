@@ -122,7 +122,7 @@ new_style_json = {
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:4204"],  # Allows CORS requests from localhost:3000
+    allow_origins=["*"],
     allow_credentials=True,  # Allow cookies to be sent
     allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
@@ -136,6 +136,8 @@ DATA_DIR = "data"
 os.makedirs(DATA_DIR, exist_ok=True)
 
 # Check if filename is valid
+
+
 def is_valid_filename(filename):
     # Only allow alphanumerics, dashes, underscores, and a single dot for .json
     # Filename should not contain directory separators or more than one dot
@@ -144,6 +146,8 @@ def is_valid_filename(filename):
     )
 
 # Save room data
+
+
 def save_room_data(room_id, data):
     # Step 1: Clean filename using werkzeug
     filename = secure_filename(room_id)
@@ -159,9 +163,12 @@ def save_room_data(room_id, data):
 
 # Redirect root endpoint to Swagger docs
 
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to the FastAPI server. Visit /docs for API documentation."}
+
+
 async def get_room_data(room_id: str):
     room_file = os.path.join(DATA_DIR, f"{room_id}.json")
     if not os.path.exists(room_file):
@@ -171,9 +178,12 @@ async def get_room_data(room_id: str):
     return room_data
 
 # Add simple status endpoint to return 200
+
+
 @app.get("/status")
 async def status():
     return {"status": "OK"}
+
 
 class Node(BaseModel):
     node_label: str
@@ -188,6 +198,7 @@ class Node(BaseModel):
     inchikey: Optional[str] = None
     canonical_smiles: Optional[str] = None
 
+
 class Edge(BaseModel):
     start_node: str
     end_node: str
@@ -196,9 +207,11 @@ class Edge(BaseModel):
     uuid: str
     route_assembly_type: dict
 
+
 class SynthGraph(BaseModel):
     nodes: list[Node]
     edges: list[Edge]
+
 
 class RouteSubgraph(BaseModel):
     aggregate_yield: float
@@ -207,23 +220,28 @@ class RouteSubgraph(BaseModel):
     method: str
     route_node_labels: list[str]
 
+
 class Routes(BaseModel):
     subgraphs: list[RouteSubgraph]
     num_subgraphs: int
+
 
 class Availability(BaseModel):
     inchikey: str
     inventory: dict
     commercial_availability: dict
 
+
 class InputFile(BaseModel):
     synth_graph: SynthGraph
     routes: Routes
     availability: Optional[list[Availability]] = None
 
+
 @app.post("/upload_json_to_ui/", description="Upload a JSON file. Example file: public/json_example_1.json")
 async def upload_json_to_ui(file: UploadFile, room_id: str, convert_askcos: bool = False):
-    logger.info(f"Received upload request for room_id: {room_id}, convert_askcos: {convert_askcos}")
+    logger.info(
+        f"Received upload request for room_id: {room_id}, convert_askcos: {convert_askcos}")
     try:
         # Parse the JSON file
         json_data = json.loads(await file.read())
@@ -234,7 +252,8 @@ async def upload_json_to_ui(file: UploadFile, room_id: str, convert_askcos: bool
                 json_data = await convert_to_aicp(ConvertToAicpRequest(graph_data=json_data, convert_askcos=convert_askcos))
             except Exception as e:
                 logger.error(f"Error converting ASKCOS data: {str(e)}")
-                raise HTTPException(status_code=500, detail=f"Error converting ASKCOS data: {str(e)}")
+                raise HTTPException(
+                    status_code=500, detail=f"Error converting ASKCOS data: {str(e)}")
 
         # Validate the JSON data using Pydantic
         validated_data = InputFile(**json_data)
@@ -251,29 +270,33 @@ async def upload_json_to_ui(file: UploadFile, room_id: str, convert_askcos: bool
         # Send the data to the WebSocket client associated with the room ID
         if room_id in room_connections:
             try:
-                await room_connections[room_id].send_json({"room_id": room_id, "data": validated_data.dict()})
+                await room_connections[room_id].send_json({"type": "new-graph", "room_id": room_id, "data": validated_data.dict()})
                 logger.info(f"Sent JSON data to WebSocket for room {room_id}")
             except RuntimeError as e:
-                logger.warning(f"Failed to send data to WebSocket for room {room_id}: {e}")
+                logger.warning(
+                    f"Failed to send data to WebSocket for room {room_id}: {e}")
             except Exception as e:
-                logger.error(f"Unexpected error while sending data to WebSocket for room {room_id}: {e}")
+                logger.error(
+                    f"Unexpected error while sending data to WebSocket for room {room_id}: {e}")
         else:
-            logger.warning(f"Room ID {room_id} not found in active WebSocket connections: {list(room_connections.keys())}")
-        
+            logger.warning(
+                f"Room ID {room_id} not found in active WebSocket connections: {list(room_connections.keys())}")
 
         # Return only the JSON data to the front end
         return {"data": validated_data.dict()}
     except json.JSONDecodeError as e:
         logger.error(f"Invalid JSON file: {str(e)}")
-        raise HTTPException(status_code=400, detail=f"Invalid JSON file: {str(e)}")
+        raise HTTPException(
+            status_code=400, detail=f"Invalid JSON file: {str(e)}")
     except ValidationError as e:
         logger.error(f"Validation error: {str(e)}")
-        raise HTTPException(status_code=422, detail=f"Validation error: {str(e)}")
+        raise HTTPException(
+            status_code=422, detail=f"Validation error: {str(e)}")
 
 
 # WebSocket endpoint
 # Maintain a mapping of room IDs to WebSocket connections
-room_connections = {}
+room_connections: dict[str, WebSocket] = {}
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -286,7 +309,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
     await websocket.accept()
     logger.info(f"New WebSocket connection established for room_id: {room_id}")
-    await websocket.send_json({"room_id": room_id})
+    await websocket.send_json({"type": "new-room", "room_id": room_id})
 
     try:
         while True:
@@ -299,7 +322,7 @@ async def websocket_endpoint(websocket: WebSocket):
                             room_data = json.load(file)
                             if room_id_from_file in room_connections:
                                 try:
-                                    await room_connections[room_id_from_file].send_json({"data": room_data})
+                                    await room_connections[room_id_from_file].send_json({"type": "new-graph", "room_id": room_id, "data": room_data})
                                 except RuntimeError as e:
                                     logger.warning(f"Failed to send data to WebSocket for room {room_id_from_file}: {e}")
                             # Send data and delete the file after successful transmission
@@ -316,20 +339,37 @@ async def websocket_endpoint(websocket: WebSocket):
             logger.info(f"Removing room_id {room_id} from room_connections due to WebSocket closure")
             room_connections.pop(room_id, None)
 
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    logger.info("Shutting down... closing all WebSocket connections.")
+    for room_id, websocket in room_connections.items():
+        try:
+            await websocket.close()
+        except Exception as e:
+            logger.warning(f"Error closing websocket for room {room_id}: {e}")
+    room_connections.clear()
+
+
 ################
 # HTML Content
 ################
 
 # Read HTML content from file
+
+
 def get_html_content(file_path: str) -> str:
     with open(file_path, 'r') as file:
         return file.read()
 
 # Serve HTML content, hide from swagger
+
+
 @app.get("/ws-test", include_in_schema=False)
 async def getWsTestHtml():
     html_content = get_html_content("websocket_validation.html")
     return HTMLResponse(html_content)
+
 
 
 ###################
@@ -339,7 +379,8 @@ async def getWsTestHtml():
 # Endpoint to convert reaction smiles to SVG
 @app.get("/rxsmiles2svg")
 async def rxsmiles_to_svg_endpoint(rxsmiles: str = 'CCO.CC(=O)O>>CC(=O)OCC.O', highlight: bool = True, base64_encode: bool = True):
-    svg = reaction_smiles_to_image(rxsmiles, align=False, transparent=False, highlight=highlight, retro=False)
+    svg = reaction_smiles_to_image(
+        rxsmiles, align=False, transparent=False, highlight=highlight, retro=False)
     svg = svg.replace('"', "'")
     if base64_encode:
         svg = base64.b64encode(svg.encode('utf-8')).decode('utf-8')
@@ -348,23 +389,28 @@ async def rxsmiles_to_svg_endpoint(rxsmiles: str = 'CCO.CC(=O)O>>CC(=O)OCC.O', h
         return JSONResponse(content={"rxsmiles": rxsmiles, "svg": svg})
 
 # Endpoint to convert molecule SMILES to SVG
+
+
 @app.get("/molsmiles2svg")
 async def smiles_to_svg_endpoint(mol_smiles: str = 'Cc1cc(Br)cc(C)c1C1C(=O)CCC1=O', img_width: int = 300, img_height: int = 300, base64_encode: bool = True):
     if not mol_smiles:
         logger.error("Empty SMILES string provided")
-        raise HTTPException(status_code=400, detail="Empty SMILES string provided")
+        raise HTTPException(
+            status_code=400, detail="Empty SMILES string provided")
 
     mol = Chem.MolFromSmiles(mol_smiles)
     if mol is None:
         logger.error(f"Invalid SMILES string: {mol_smiles}")
-        raise HTTPException(status_code=400, detail=f"Invalid SMILES string: {mol_smiles}")
+        raise HTTPException(
+            status_code=400, detail=f"Invalid SMILES string: {mol_smiles}")
 
     d2d = Draw.MolDraw2DSVG(img_width, img_height)
     try:
         d2d.DrawMolecule(mol)
     except Exception as e:
         logger.error(f"Failed to draw molecule: {mol_smiles}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to draw molecule: {mol_smiles}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to draw molecule: {mol_smiles}")
     d2d.FinishDrawing()
 
     svg = d2d.GetDrawingText()
@@ -373,7 +419,7 @@ async def smiles_to_svg_endpoint(mol_smiles: str = 'Cc1cc(Br)cc(C)c1C1C(=O)CCC1=
         return JSONResponse(content={"smiles": mol_smiles, "svg_base64": svg})
     else:
         return JSONResponse(content={"smiles": mol_smiles, "svg": svg})
-    
+
 
 # Create style function
 def create_style(style_name, style_json):
@@ -386,16 +432,19 @@ def create_style(style_name, style_json):
             print("Existing styles:", existing_styles)  # Debug print
 
             # Extract the style names
-            style_names = [style['title'] for style in existing_styles if isinstance(style, dict)]
-            
+            style_names = [style['title']
+                           for style in existing_styles if isinstance(style, dict)]
+
             if style_name in style_names:
-                print(f"Style '{style_name}' already exists. Applying existing style.")
+                print(
+                    f"Style '{style_name}' already exists. Applying existing style.")
                 return True  # Style already exists
             else:
                 print(f"Creating new style '{style_name}'.")
 
                 # Create the new style in Cytoscape
-                create_style_response = requests.post(f"{CYTOSCAPE_URL}/styles", json=style_json)
+                create_style_response = requests.post(
+                    f"{CYTOSCAPE_URL}/styles", json=style_json)
                 if create_style_response.ok:
                     print(f"New style '{style_name}' created.")
                     return True
@@ -405,10 +454,12 @@ def create_style(style_name, style_json):
             print("Failed to retrieve existing styles.")
     except requests.exceptions.RequestException as e:
         print(f"Error creating style: {e}")
-    
+
     return False
 
 # Apply style function
+
+
 def apply_style(network_suid, style_name):
     """Applies the style to the network."""
     style_json = new_style_json
@@ -418,25 +469,31 @@ def apply_style(network_suid, style_name):
 
     try:
         # Apply the style to the network
-        apply_style_response = requests.get(f"{CYTOSCAPE_URL}/apply/styles/{style_name}/{network_suid}")
+        apply_style_response = requests.get(
+            f"{CYTOSCAPE_URL}/apply/styles/{style_name}/{network_suid}")
         if apply_style_response.ok:
-            print(f"Style '{style_name}' applied to the network {network_suid}.")
+            print(
+                f"Style '{style_name}' applied to the network {network_suid}.")
             return {"success": f"Style '{style_name}' applied to the network {network_suid}."}
         else:
             print(f"Failed to apply style '{style_name}'.")
     except requests.exceptions.RequestException as e:
         print(f"Error applying style: {e}")
-    
+
     return {"error": f"Failed to apply style '{style_name}'."}
 
 # Apply layout function
+
+
 def apply_layout(network_suid, layout_type):
     """Applies the layout to the network."""
     try:
         # Apply the layout
-        apply_layout_response = requests.get(f"{CYTOSCAPE_URL}/apply/layouts/{layout_type}/{network_suid}")
+        apply_layout_response = requests.get(
+            f"{CYTOSCAPE_URL}/apply/layouts/{layout_type}/{network_suid}")
         if apply_layout_response.ok:
-            print(f"Layout '{layout_type}' applied to the network {network_suid}.")
+            print(
+                f"Layout '{layout_type}' applied to the network {network_suid}.")
             return {"success": f"Layout '{layout_type}' applied to the network {network_suid}."}
         else:
             print(f"Failed to apply layout '{layout_type}'.")
@@ -445,9 +502,11 @@ def apply_layout(network_suid, layout_type):
 
     return {"error": f"Failed to apply layout '{layout_type}'."}
 
+
 def load_example_payload():
     with open("send_cytoscape_example.json", "r") as file:
         return json.load(file)
+
 
 def assign_srole(parsed_data):
     # Assign substance roles
@@ -484,69 +543,77 @@ def assign_srole(parsed_data):
                 node["srole"] = "im"  # intermediate
     return parsed_data
 
+
 @app.post("/send_to_cytoscape/", response_model=dict)
 def send_to_cytoscape(network_json: dict = load_example_payload(), layout_type: str = "hierarchical"):
     """ Uploads a Cytoscape JSON network and applies the default style """
     try:
         # Send the network to Cytoscape without custom headers
-        response = requests.post(f"{CYTOSCAPE_URL}/networks?format=cyjs", json=network_json)
-        
+        response = requests.post(
+            f"{CYTOSCAPE_URL}/networks?format=cyjs", json=network_json)
+
         if response.ok:
             # Log the full response to debug
             logger.info(f"Response from Cytoscape: {response.json()}")
-            
+
             # Get the network SUID from the response
             network_suid = response.json().get('networkSUID')
             if not network_suid:
                 raise ValueError("Network SUID not found in response.")
-            
+
             logger.info(f"Network created with SUID: {network_suid}")
-            
+
             # Create a view for the network
-            view_response = requests.get(f"{CYTOSCAPE_URL}/networks/{network_suid}/views/first")
+            view_response = requests.get(
+                f"{CYTOSCAPE_URL}/networks/{network_suid}/views/first")
             if view_response.ok:
                 logger.info("Network view created.")
-                
+
                 # Get the SUID of the view from the response
                 view_suid = int(view_response.json()['data']['SUID'])
                 logger.info(f"View SUID: {view_suid}")
 
                 # Apply the default style
                 if apply_style(network_suid, DEFAULT_STYLE_NAME):
-                    logger.info(f"Style '{DEFAULT_STYLE_NAME}' applied to network {network_suid}.")
+                    logger.info(
+                        f"Style '{DEFAULT_STYLE_NAME}' applied to network {network_suid}.")
                 else:
-                    logger.error(f"Failed to apply style '{DEFAULT_STYLE_NAME}' to network {network_suid}.")
+                    logger.error(
+                        f"Failed to apply style '{DEFAULT_STYLE_NAME}' to network {network_suid}.")
 
                 # Apply layout if provided
                 if apply_layout(network_suid, layout_type):
-                    logger.info(f"Layout '{layout_type}' applied to network {network_suid}.")
+                    logger.info(
+                        f"Layout '{layout_type}' applied to network {network_suid}.")
                 else:
-                    logger.error(f"Failed to apply layout '{layout_type}' to network {network_suid}.")
+                    logger.error(
+                        f"Failed to apply layout '{layout_type}' to network {network_suid}.")
 
                 # Return network and view SUIDs
                 return {"network_suid": network_suid, "view_suid": view_suid}
             else:
-                logger.error(f"Failed to create network view. Response: {view_response.text}")
+                logger.error(
+                    f"Failed to create network view. Response: {view_response.text}")
                 return {"error": "Failed to create network view."}
-        
+
         else:
-            logger.error(f"Failed to upload network. Response: {response.text}")
+            logger.error(
+                f"Failed to upload network. Response: {response.text}")
             return {"error": "Failed to upload network."}
-    
+
     except requests.exceptions.RequestException as e:
         # Log the request failure and return a failure response
         logger.error(f"Request failed: {e}")
-        
+
         if hasattr(e, 'response') and e.response:
             logger.error(f"Response content: {e.response.text}")
-        
+
         return {"error": "Failed to upload network."}
-    
+
     except ValueError as e:
         # Log the value error
         logger.error(f"Error: {e}")
         return {"error": "Failed to upload network to cytoscape."}
-
 
 
 @app.post("/normalize_roles", summary="Normalize reaction roles from a RXN Smiles")
@@ -559,39 +626,43 @@ async def normalize_rxsmiles_roles(request: NormalizeRoleRequest) -> NormalizeRo
 
     # Check if the RXSMILES has atom mapping
     if not role_assigner_utils.rxsmiles_has_atommapping(rxsmiles):
-        raise HTTPException(status_code=400, detail="Input RXSMILES must contain atom mapping.")
+        raise HTTPException(
+            status_code=400, detail="Input RXSMILES must contain atom mapping.")
 
     try:
         normalized_rxn = role_assigner_utils.normalize_roles(rxsmiles)
         return NormalizeRoleResponse(original_rxsmiles=request.rxsmiles, rxsmiles=normalized_rxn)
     except RxsmilesAtomMappingException:
-        raise HTTPException(status_code=400, detail="Error parsing RXN Smiles: Atom mapping required")
+        raise HTTPException(
+            status_code=400, detail="Error parsing RXN Smiles: Atom mapping required")
     except Exception as e:
         logger.error(f"Error normalizing roles: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal error normalizing roles")
+        raise HTTPException(
+            status_code=500, detail="Internal error normalizing roles")
+
 
 @app.get("/compute_all_bi")
 async def compute_all_bi(rxsmiles: Optional[str] = "ClC(Cl)(O[C:5](=[O:11])OC(Cl)(Cl)Cl)Cl.[Cl:13][C:14]1[CH:19]=[CH:18][C:17]([C:20]2[N:21]=[C:22]([CH:31]3[CH2:36][CH2:35][NH:34][CH2:33][CH2:32]3)[S:23][C:24]=2[C:25]2[CH:30]=[CH:29][CH:28]=[CH:27][CH:26]=2)=[CH:16][CH:15]=1.C(N(CC)CC)C.Cl.[CH3:45][NH:46][OH:47].[Cl-].[NH4+]>ClCCl.O>[Cl:13][C:14]1[CH:19]=[CH:18][C:17]([C:20]2[N:21]=[C:22]([CH:31]3[CH2:36][CH2:35][N:34]([C:5](=[O:11])[N:46]([OH:47])[CH3:45])[CH2:33][CH2:32]3)[S:23][C:24]=2[C:25]2[CH:30]=[CH:29][CH:28]=[CH:27][CH:26]=2)=[CH:16][CH:15]=1"):
     try:
         # Ensure rxsmiles is provided
         if rxsmiles is None:
-            raise HTTPException(status_code=400, detail="rxsmiles parameter is required.")
-        
+            raise HTTPException(
+                status_code=400, detail="rxsmiles parameter is required.")
+
         # Process the rxsmiles input
         pbi = role_assigner_utils.compute_pbi(rxsmiles)
         rbi = role_assigner_utils.compute_rbi(rxsmiles)
         tbi = role_assigner_utils.compute_tbi(rxsmiles)
-        
+
         # Round values to two decimal places
         pbi = round(pbi, 2)
         rbi = round(rbi, 2)
         tbi = round(tbi, 2)
-        
+
         return {"pbi": pbi, "rbi": rbi, "tbi": tbi}
-    
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
-
 
 
 @app.post("/convert2aicp", summary="Convert to AICP format")
@@ -686,7 +757,8 @@ async def convert_to_aicp(request: ConvertToAicpRequest) -> dict:
 
                 parsed_data["synth_graph"]["nodes"].append(node_data)
 
-            node_type_map = {node["node_label"]: node["node_type"] for node in parsed_data["synth_graph"]["nodes"]}
+            node_type_map = {node["node_label"]: node["node_type"]
+                             for node in parsed_data["synth_graph"]["nodes"]}
 
             # Parsing graph edges (links)
             for link in result.get("graph", {}).get("links", []):
@@ -717,7 +789,8 @@ async def convert_to_aicp(request: ConvertToAicpRequest) -> dict:
 
             # Parse routes
             parsed_data["routes"]["subgraphs"] = []
-            parsed_data["routes"]["num_subgraphs"] = len(result.get("paths", []))
+            parsed_data["routes"]["num_subgraphs"] = len(
+                result.get("paths", []))
 
             route_node_labels = set()
             for path in result.get("paths", []):
@@ -732,10 +805,15 @@ async def convert_to_aicp(request: ConvertToAicpRequest) -> dict:
                 route_node_labels.update(subgraph_data["route_node_labels"])
 
             # Filter availability to include only substances in route subgraphs
-            parsed_data["availability"] = [item for item in availability if item["inchikey"] in route_node_labels]
+            parsed_data["availability"] = [
+                item for item in availability if item["inchikey"] in route_node_labels]
 
             parsed_data = assign_srole(parsed_data)
 
             return parsed_data
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error converting ASKCOS data: {str(e)}")
+            raise HTTPException(
+                status_code=500, detail=f"Error converting ASKCOS data: {str(e)}")
+    else:
+        raise HTTPException(
+            status_code=400, detail="Error converting data: Invalid request")
