@@ -9,11 +9,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />
-  },
-  {
-    path: "/room/:roomId",
-    element: <App />
-  },
+  }
 ]);
 
 reportWebVitals();

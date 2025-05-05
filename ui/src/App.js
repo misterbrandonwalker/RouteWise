@@ -28,8 +28,8 @@ const defaultApiStatus = { error: false };
 
 function App() {
   const navigate = useNavigate();
-
   useEffect(() => {
+    // Create a WebSocket connection
     const websocket = new WebSocket(`${process.env.API_URL}/ws`);
 
     websocket.onopen = () => {
@@ -40,20 +40,24 @@ function App() {
         let data;
         try {
             data = JSON.parse(event.data);
+            console.log(data);
         } catch (error) {
             console.error("Invalid JSON received:", event.data);
             return;
         }
-        if (data.room_id) {
+        const messageType = data.type;
+        if (messageType === "new-room") {
             // Navigate to the new URL with the room ID
-            const newUrl = `/room/${data.room_id}`;
+            const newUrl = `?room_id=${data.room_id}`;
             navigate(newUrl);
-        } else if (data.data) {
+        } else if (messageType === "new-graph") {
             // Update the graph object with the received data
             const finalData = data.data;
             setAicpGraph(finalData);
             const mappedData = mapGraphDataToCytoscape(finalData);
             updateCytoscapeGraph(mappedData);
+        } else {
+            console.error("Unknown message type:", messageType);
         }
     };
 

@@ -223,47 +223,74 @@ The `availability` section in the JSON file provides detailed inventory informat
 
 ---
 
-
 #### UI Setup
+
 1. Navigate to the `ui` directory:
+
    ```bash
    cd ui/
    ```
+
 2. Install dependencies:
+
    ```bash
    npm install
    ```
-3. Start the development server:
-   ```bash
+
+3. (Optional) Set the API_URL and REACT_APP_API_URL environment variables:
+
+   ``` bash
    export API_URL=http://0.0.0.0:5099
    export REACT_APP_API_URL=http://localhost:4204/
+   ```
+
+4. Start the development server:
+
+   ```bash
    npm run start
    ```
-4. Open the application in your browser:
-   [http://localhost:4204/](http://localhost:4204/)
+
+5. Open the application in your browser: [http://localhost:4204/](http://localhost:4204/)
 
 #### API Setup
 
 ##### If you need to install packages:
-1. Navigate to the `api` directory:
+
+1. (Optional) Set the API_URL and REACT_APP_API_URL environment variables:
+
+   ``` bash
+   export API_URL=http://0.0.0.0:5099
+   export REACT_APP_API_URL=http://localhost:4204/
+   ```
+
+2. Navigate to the `api` directory:
+
    ```bash
    cd ./api
    ```
-2. Run the development setup script:
+
+3. Run the development setup script:
+
    ```bash
-   export API_URL=http://0.0.0.0:5099
-   export REACT_APP_API_URL=http://localhost:4204/
-   bash ./run.sh --dev
+   bash ./run.sh
    ```
 
 ##### If packages are already installed:
-1. Run the development setup script with the `--skip-env-setup` flag:
-   ```bash
+
+1. (Optional) Set the API_URL and REACT_APP_API_URL environment variables:
+
+   ``` bash
    export API_URL=http://0.0.0.0:5099
    export REACT_APP_API_URL=http://localhost:4204/
-   bash ./run.sh --dev --skip-env-setup
+   ```
 
-2. Open the Swagger documentation in your browser:
+2. Run the development setup script with the `--skip-env-setup` flag:
+
+   ``` bash
+   bash ./run.sh --skip-env-setup
+   ```
+
+3. Open the Swagger documentation in your browser:
    [http://0.0.0.0:5099/api/v1/docs/aicp/nv_api](http://0.0.0.0:5099/api/v1/docs/aicp/nv_api)
 
 ---
