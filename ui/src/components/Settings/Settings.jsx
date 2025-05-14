@@ -244,10 +244,10 @@ const Settings = () => {
       >
         <Typography>
           <Paragraph>
-            <em>Citation for Network Visualizer manuscript TBD.</em>
+            <em>Citation for Route Wise manuscript TBD.</em>
           </Paragraph>
           <Paragraph>
-            <em>Citation for Network Visualizer code repository TBD.</em>
+            <em>Citation for Route Wise code repository TBD.</em>
           </Paragraph>
           <Paragraph>
             <b>NV API Swagger Page:</b>{" "}
