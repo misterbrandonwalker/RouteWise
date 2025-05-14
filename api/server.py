@@ -55,7 +55,7 @@ logger.addHandler(handler)
 
 # Create Swagger Docs URL and attach it to the app
 docs_base = os.getenv("url_api_docs_base", "/api/v1/docs/aicp")
-alias = os.getenv("network_alias_nv_api", "nv_api")
+alias = os.getenv("network_alias_rw_api", "rw_api")
 docs_url = (
     docs_base
     + "/"
@@ -183,7 +183,7 @@ def load_example_payload():
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to the FastAPI server. Visit /api/v1/docs/aicp/nv_api for API documentation."}
+    return {"message": "Welcome to the FastAPI server. Visit /api/v1/docs/aicp/rw_api for API documentation."}
 
 
 async def get_room_data(room_id: str):
