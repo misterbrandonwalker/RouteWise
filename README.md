@@ -1,64 +1,13 @@
-# aspire-network-visualizer
+# RouteWise
 
 1.  [Prerequisite](#prerequisite)
 2.  [Installation](#installation)
-3.  [Visualize data using JSON examples](#visualize-data-using-json-examples)
-4.  [JSON data structure explained](#json-data-structure-explained)
-5.  [App settings](#app-settings)
-6.  [Running containers on custom ports](#running-containers-on-custom-ports)
-7.  [Features](#features)
-8.  [API Endpoints](#api-endpoints)
-
-## Features
-
-### Node Styles
-- **Reaction Nodes**: Always displayed as gold rectangles unless `is_valid` is `false`, in which case they are displayed as gold circles.
-
-- **normalize_roles**: This function reassigns the roles of substances (reactants, reagents, and products) in a reaction SMILES (RXSMILES) string based on atom mapping. It ensures consistency by:
-  1. Checking for atom mapping in the RXSMILES.
-  2. Parsing the RXSMILES into reactants, reagents, and products.
-  3. Reassigning roles:
-     - Reactants with no atom mapping overlap with products are reassigned as reagents.
-     - Reagents with atom mapping overlap with products are reassigned as reactants.
-  4. Reconstructing the RXSMILES with updated roles:
-     - Reactants are placed on the left side of the RXSMILES (before the first `>` delimiter).
-     - Reagents are placed in the middle section (between the first and second `>` delimiters).
-     - Products are placed on the right side (after the second `>` delimiter).
-     - During the role normalization process, the fragment indices in the fragment-section of the RXSMILES extension (|f:u.v,w.x|) are automatically updated as necessary to reflect the position of the fragments of substances at the end of the process.
-
-- **Send To Cytoscape Button**: Allows users to send the current graph to Cytoscape. Ensure Cytoscape is running in the background for this feature to work.
-- **Route Selection Dropdown**: Includes the "SynthGraph" option to view the synthesis graph itself. Evidence routes are labeled as "Evidence 0", "Evidence 1", etc., and predicted routes are labeled as "Predicted 0", "Predicted 1", etc. For massive graphs with cycles (e.g., ASKCOS examples), use the force-directed layout for rendering.
-- **AICP/Cytoscape JSON Toggle**: Enables users to view JSON data in different formats, including AICP and Cytoscape formats.
-- **Upload JSON Functionality**: Provides options to upload JSON files, Cytoscape JSON files, or pass JSON data directly in the request body using the `json_data` parameter. Users can also refer to the Jupyter notebook example for uploading JSON or use the Swagger documentation available at [http://0.0.0.0:5099/api/v1/docs/aicp/nv_api](http://0.0.0.0:5099/api/v1/docs/aicp/nv_api).
-- **Example Graphs**: Includes two evidence-based route examples, an ASKCOS Route Sample and one hybrid example which includes both evidence and predicted routes. The ASKCOS Route Sample is parsed and converted internally into the graph format before rendering.
-- **Aggregate Yield Display**: Displays aggregate yield as "Agg Yield" on top of the graph for better visualization.
-- **User Settings**: Offers various settings that users can toggle to customize their experience, including graph rendering options and visualization preferences.
-
-  - **Enable Normalize Roles for Reactions**: This toggle allows users to enable or disable the normalization of reaction roles for RXN SMILES. When enabled, the application processes RXN SMILES to ensure consistent roles for reactants, reagents, and products. By default, this setting is disabled.
-
-  - **Show Structures for Substances**: This toggle allows users to show or hide graphical depictions of substances in the graph. When enabled, all depictions are shown; when disabled, only depictions for terminal molecules are shown.
-
-  - **Duplicate Reagents and Starting Materials**: This toggle allows users to duplicate reagents and starting materials in the graph.
-
-  - **Highlight Atom Indices in Reaction Depictions**: This toggle enables or disables the highlighting of atom indices in graphical depictions.
-
-  - **Show Atom Indices in Reaction Depiction**: This toggle allows users to display atom indices in molecular depictions. When enabled, atom indices are shown for atoms with mapping information, providing additional clarity in visualizing molecular structures.
-
-  - **Set Edge Style**: Users can choose the style of edges in the graph, including options like "Round Taxi," "Straight," and "Segments."
-
-  - **Product Edge Thickness**: Users can adjust the thickness of product edges in the graph using a slider.
-
-
-
-
-1.  [Prerequisite](#prerequisite)
-2.  [Installation](#installation)
-3.  [Visualize data using JSON examples](#visualize-data-using-json-examples)
-4.  [JSON data structure explained](#json-data-structure-explained)
-    * [Nodes structure](#nodes-structure)
-    * [Edges structure](#edges-structure)
-5.  [App settings](#app-settings)
-6.  [Running containers on custom ports](#running-containers-on-custom-ports)
+3.  [Features](#features)
+4.  [Visualize data using JSON examples](#visualize-data-using-json-examples)
+5.  [JSON data structure explained](#json-data-structure-explained)
+6.  [Interactive API Documentation and Testing](#interactive-api-documentation-and-testing)
+7.  [Support for Predicted Synthesis Routes](#support-for-predicted-synthesis-routes)
+8.  [Local Deployment Without Containerization](#Local-Deployment-Without-Containerization)
 
 ## Prerequisite
 
@@ -68,41 +17,107 @@ Required software you need to be installed before you move to visualizer install
 Optional (not required, but nice to have):
 * [Git](https://git-scm.com/)
 
-## Environment Variables
 
----
 
-### Using Docker (Recommended)
+## Installation
 
-#### For Mac Users:
-1. Set the default Docker platform:
+
+1. Clone this Git repository.
+
+   ```bash
+   git clone https://github.com/ncats/aspire-network-visualizer
+   ```
+
+   Enter into the subdirectory containing the source code.
+
+   ```bash
+   cd aspire-network-visualizer
+   ```
+
+   To ensure you have the latest updates for this repository, you can use the following command:
+
+
+   ```bash
+   git pull
+   ```
+
+2. Set the default Docker platform:
    ```bash
    export DOCKER_DEFAULT_PLATFORM=linux/amd64
    ```
 
-2. Build the Docker containers:
+3. Build the Docker containers:
    ```bash
    docker compose build --parallel
    ```
 
-3. Start the containers:
+4. Start the containers:
    ```bash
    docker compose up -d
    ```
-
-4. Open the Swagger documentation in your browser:
-   [http://0.0.0.0:5099/api/v1/docs/aicp/nv_api](http://0.0.0.0:5099/api/v1/docs/aicp/nv_api)
 
 5. Open the front-end application in your browser:
    [http://localhost:4204/](http://localhost:4204/)
 
 
+   Interactive API documentation via Swagger is available at:
+   [http://0.0.0.0:5099/api/v1/docs/aicp/nv_api](http://0.0.0.0:5099/api/v1/docs/aicp/nv_api)
+
+
+
+
+
+
+## Features
+
+
+
+
+- **Route Selection Dropdown**: Includes the "SynthGraph" option to view the synthesis graph itself. Evidence routes are labeled as "Evidence 0", "Evidence 1", etc., and predicted routes are labeled as "Predicted 0", "Predicted 1", etc. For massive graphs with cycles (e.g., ASKCOS examples), use the force-directed layout for rendering.
+- **AICP/Cytoscape JSON Toggle**: Enables users to view JSON data in different formats, including AICP and Cytoscape formats.
+- **Upload JSON Functionality**: Provides options to upload JSON files, Cytoscape JSON files, or pass JSON data directly in the request body using the `json_data` parameter. Users can also refer to the Jupyter notebook example for uploading JSON or use the Swagger documentation available at [http://0.0.0.0:5099/api/v1/docs/aicp/nv_api](http://0.0.0.0:5099/api/v1/docs/aicp/nv_api).
+- **Example Graphs**: Includes two evidence-based route examples, an ASKCOS Route Sample and one hybrid example which includes both evidence and predicted routes. The ASKCOS Route Sample is parsed and converted internally into the graph format before rendering.
+- **Send To Cytoscape Button**: Allows users to send the current graph to Cytoscape. Ensure Cytoscape is running in the background for this feature to work.
+- **Aggregate Yield Display**: Displays aggregate yield as "Agg Yield" on top of the graph for better visualization.
+- **User Settings**: Offers various settings that users can toggle to customize their experience, including graph rendering options and visualization preferences.
+
+- **Enable Normalize Roles for Reactions**: This toggle allows users to enable or disable the normalization of reaction roles for RXN SMILES. When enabled, the application processes RXN SMILES to ensure consistent roles for reactants, reagents, and products. By default, this setting is disabled.
+
+      Logic:
+
+         This function reassigns the roles of substances (reactants, reagents, and products) in a reaction SMILES (RXSMILES) string based on atom mapping. It ensures consistency by:
+         1. Checking for atom mapping in the RXSMILES.
+         2. Parsing the RXSMILES into reactants, reagents, and products.
+         3. Reassigning roles:
+            - Reactants with no atom mapping overlap with products are reassigned as reagents.
+            - Reagents with atom mapping overlap with products are reassigned as reactants.
+         4. Reconstructing the RXSMILES with updated roles:
+            - Reactants are placed on the left side of the RXSMILES (before the first `>` delimiter).
+            - Reagents are placed in the middle section (between the first and second `>` delimiters).
+            - Products are placed on the right side (after the second `>` delimiter).
+            - During the role normalization process, the fragment indices in the fragment-section of the RXSMILES extension (|f:u.v,w.x|) are automatically updated as necessary to reflect the position of the fragments of substances at the end of the process.
+
+
+- **Show Structures for Substances**: This toggle allows users to show or hide graphical depictions of substances in the graph. When enabled, all depictions are shown; when disabled, only depictions for terminal molecules are shown.
+
+- **Duplicate Reagents and Starting Materials**: This toggle allows users to duplicate reagents and starting materials in the graph.
+
+- **Highlight Atom Indices in Reaction Depictions**: This toggle enables or disables the highlighting of atom indices in graphical depictions.
+
+- **Show Atom Indices in Reaction Depiction**: This toggle allows users to display atom indices in molecular depictions. When enabled, atom indices are shown for atoms with mapping information, providing additional clarity in visualizing molecular structures.
+
+- **Set Edge Style**: Users can choose the style of edges in the graph, including options like "Round Taxi," "Straight," and "Segments."
+
+- **Product Edge Thickness**: Users can adjust the thickness of product edges in the graph using a slider.
+
+
 
 ### Visualize data using JSON examples
 
-You can use attached JSON examples (check `json-examples` folder) to render some prepared graphs:
+You can use attached JSON examples (check `json-examples` folder) to render some prepared graphs.
+To do so, select `Upload JSON`from the drop-down list, then select the file in appropriate JSON format by clicking on `Select JSON file`.
 
-![Alt](/images/Example.png "How to visualize graph using JSON files")
+You can also visualize synthesis routes by using the API as follows.
 
 When you open the front-end application, a room ID will be assigned to you. You can find this room ID in the URL after `?room_id=<room_id>`. To send data to the backend, you now have two options depending on the format of your input:
 
@@ -113,6 +128,19 @@ When you open the front-end application, a room ID will be assigned to you. You 
 Both examples are demonstrated in the Jupyter notebook, where you can choose the appropriate method based on your input format. Be sure to paste your assigned room ID in the relevant input field or parameter to ensure the data is routed correctly.
 
 In the following section we'll describe basic graph structure, so you can create and render your own datasets.
+<br>
+<br>
+<br>
+
+
+## Interactive API Documentation and Testing
+<br>
+
+  Interactive API documentation via Swagger is available at:
+   [http://0.0.0.0:5099/api/v1/docs/aicp/nv_api](http://0.0.0.0:5099/api/v1/docs/aicp/nv_api)
+
+<br>
+
 
 ## JSON data structure explained
 
@@ -142,7 +170,7 @@ Where `nodes` is an array of graph nodes, and `edges` - array of graph edges (co
 
 <hr>
 
-### Nodes structure
+### Nodes
 
 Mandatory fields/attributes are marked with `*`.
 
@@ -170,7 +198,7 @@ Mandatory fields/attributes are marked with `*`.
 
 <hr>
 
-### Edges structure
+### Edges
 
 In the following table below you'll find all supported parameters for the **edges**:
 
@@ -227,6 +255,17 @@ The `availability` section in the JSON file provides detailed inventory informat
 | `commercial_availability` | Contains information about the substance's commercial availability. Options: <br> - `available`: Boolean indicating if the substance is commercially available. <br> - `vendors`: Array of objects specifying vendor details. Each object includes: <br> &nbsp;&nbsp;&nbsp;&nbsp;- `smiles`: SMILES representation of the substance. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `source`: Source/vendor name. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `ppg`: Price per gram. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `lead_time`: Lead time for delivery. <br> &nbsp;&nbsp;&nbsp;&nbsp;- `url`: URL for the vendor's product page. |
 
 ---
+
+<br>
+
+## Support for Predicted Synthesis Routes
+
+This endpoint converts input data, e.g.: predicted synthesis routes into the AICP format. Currently we support predicted synthesis routes generated by [ASKCOS](https://askcos.mit.edu/). For more information please refer to the interacive documentation of the [/convert2aicp](http://localhost:5099/api/v1/docs/aicp/nv_api#/default/_convert_to_aicp_convert2aicp_post) API endpoint.
+
+<br>
+
+
+## Local Deployment Without Containerization
 
 #### UI Setup
 
@@ -299,18 +338,3 @@ The `availability` section in the JSON file provides detailed inventory informat
    [http://0.0.0.0:5099/api/v1/docs/aicp/nv_api](http://0.0.0.0:5099/api/v1/docs/aicp/nv_api)
 
 ---
-
-### `POST /convert2aicp`
-
-This endpoint converts input data into the AICP format. convert_askcos is an optional boolean to convert raw askcos graph data into AICP format
-
-
-Use this endpoint to process ASKCOS data and render it in the AICP format for visualization.
-
-## Pulling Updates
-
-To ensure you have the latest updates for this repository, you can use the following command:
-
-```bash
-git pull
-```
