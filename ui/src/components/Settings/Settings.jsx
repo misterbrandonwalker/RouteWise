@@ -250,12 +250,12 @@ const Settings = () => {
             <em>Citation for Route Wise code repository TBD.</em>
           </Paragraph>
           <Paragraph>
-            <b>NV API Swagger Page:</b>{" "}
+            <b>RW API Swagger Page:</b>{" "}
             <a
-              href={process.env.API_URL + "/api/v1/docs/aicp/nv_api"}
+              href={process.env.API_URL + "/api/v1/docs/aicp/rw_api"}
               target="_blank"
             >
-              {process.env.API_URL + "/api/v1/docs/aicp/nv_api"}
+              {process.env.API_URL + "/api/v1/docs/aicp/rw_api"}
             </a>
           </Paragraph>
           <Paragraph>
