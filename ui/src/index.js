@@ -38,4 +38,4 @@ if (!customElements.get("child-react-element")) {
 }
 
 // Set page tab title
-document.title = "Synthesis Route Design";
+document.title = "RouteWise";
