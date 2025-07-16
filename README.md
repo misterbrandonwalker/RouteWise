@@ -25,13 +25,13 @@ Optional (not required, but nice to have):
 1. Clone this Git repository.
 
    ```bash
-   git clone https://github.com/ncats/aspire-network-visualizer
+   git clone https://github.com/ncats/RouteWise
    ```
 
    Enter into the subdirectory containing the source code.
 
    ```bash
-   cd aspire-network-visualizer
+   cd RouteWise
    ```
 
    To ensure you have the latest updates for this repository, you can use the following command:
